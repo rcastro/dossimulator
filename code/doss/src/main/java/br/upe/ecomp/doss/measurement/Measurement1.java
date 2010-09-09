@@ -11,13 +11,13 @@ import br.upe.ecomp.doss.algorithm.Algorithm;
  */
 public class Measurement1 implements IMeasurement {
 
-    private Map<String, Class> parametersMap;
+    private Map<String, Class<?>> parametersMap;
 
     /**
      * Default constructor.
      */
     public Measurement1() {
-        parametersMap = new HashMap<String, Class>();
+        parametersMap = new HashMap<String, Class<?>>();
     }
 
     /**
@@ -37,7 +37,7 @@ public class Measurement1 implements IMeasurement {
     /**
      * {@inheritDoc}
      */
-    public Map<String, Class> getParametersMap() {
+    public Map<String, Class<?>> getParametersMap() {
         return parametersMap;
     }
 

@@ -221,7 +221,7 @@ public abstract class Algorithm implements Runnable, Configurable {
     /**
      * {@inheritDoc}
      */
-    public abstract Map<String, Class> getParametersMap();
+    public abstract Map<String, Class<?>> getParametersMap();
 
     /**
      * {@inheritDoc}

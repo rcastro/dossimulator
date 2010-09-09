@@ -53,7 +53,7 @@ public interface Configurable {
      * 
      * @return The parameters name and their class type.
      */
-    Map<String, Class> getParametersMap();
+    Map<String, Class<?>> getParametersMap();
 
     /**
      * Sets a parameter value by its name.

@@ -31,10 +31,13 @@ import java.util.Map;
  */
 public class Problem1 implements IProblem {
 
-    private Map<String, Class> parametersMap;
+    private Map<String, Class<?>> parametersMap;
 
+    /**
+     * Default constructor.
+     */
     public Problem1() {
-        parametersMap = new HashMap<String, Class>();
+        parametersMap = new HashMap<String, Class<?>>();
         parametersMap.put("Dimensions", Integer.class);
     }
 
@@ -94,7 +97,7 @@ public class Problem1 implements IProblem {
     /**
      * {@inheritDoc}
      */
-    public Map<String, Class> getParametersMap() {
+    public Map<String, Class<?>> getParametersMap() {
         return parametersMap;
     }
 
