@@ -176,7 +176,7 @@ public abstract class PSO extends Algorithm {
     /**
      * {@inheritDoc}
      */
-    public Map<String, Class> getParametersMap() {
+    public Map<String, Class<?>> getParametersMap() {
         // TODO Auto-generated method stub
         return null;
     }

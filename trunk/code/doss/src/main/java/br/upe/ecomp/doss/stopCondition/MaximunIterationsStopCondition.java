@@ -33,14 +33,14 @@ import br.upe.ecomp.doss.algorithm.Algorithm;
  */
 public class MaximunIterationsStopCondition implements IStopCondition {
 
-    private Map<String, Class> parametersMap;
+    private Map<String, Class<?>> parametersMap;
     private int maximumIterations;
 
     /**
      * Creates a new instance of this class.
      */
     public MaximunIterationsStopCondition() {
-        parametersMap = new HashMap<String, Class>();
+        parametersMap = new HashMap<String, Class<?>>();
         parametersMap.put("Maximum iterations", Integer.class);
     }
 
@@ -77,7 +77,7 @@ public class MaximunIterationsStopCondition implements IStopCondition {
     /**
      * {@inheritDoc}
      */
-    public Map<String, Class> getParametersMap() {
+    public Map<String, Class<?>> getParametersMap() {
         return parametersMap;
     }
 

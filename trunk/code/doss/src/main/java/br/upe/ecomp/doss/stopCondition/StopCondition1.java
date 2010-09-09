@@ -7,7 +7,7 @@ import br.upe.ecomp.doss.algorithm.Algorithm;
 
 public class StopCondition1 implements IStopCondition {
 
-    private Map<String, Class> parametersMap = new HashMap<String, Class>();
+    private Map<String, Class<?>> parametersMap = new HashMap<String, Class<?>>();
 
     @Override
     public String getName() {
@@ -20,7 +20,7 @@ public class StopCondition1 implements IStopCondition {
     }
 
     @Override
-    public Map<String, Class> getParametersMap() {
+    public Map<String, Class<?>> getParametersMap() {
         return parametersMap;
     }
 
