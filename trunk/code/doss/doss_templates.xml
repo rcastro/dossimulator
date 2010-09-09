@@ -19,7 +19,7 @@ public void test${cursor}() {
 	// TODO Step 3 implementation
 }</template>
 	<template autoinsert="true" context="javadoc" deleted="false" description="Default header class comment" enabled="true" name="header">Copyright (C) 2010
- * Rodrigo Castro
+ * Swarm Intelligence Team (SIT)
  * Department of Computer and Systems
  * University of Pernambuco
  * Brazil
