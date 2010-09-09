@@ -19,31 +19,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
-package br.upe.ecomp.doss.measurement;
+package br.upe.ecomp.doss.core.project;
 
-import br.upe.ecomp.doss.algorithm.Algorithm;
-import br.upe.ecomp.doss.core.Configurable;
-
-/**
- * Basic class the defines a Measurement.
- * 
- * @author Rodrigo Castro
- * 
- */
-public interface IMeasurement extends Configurable {
-
-    /**
-     * Updates this measure based on the current state of the algorithm.
-     * 
-     * @param algorithm The algorithm for which this measure is applied.
-     */
-    void update(Algorithm algorithm);
-
-    /**
-     * Returns the current value of this measure.
-     * 
-     * @return The current value of this measure.
-     */
-    double getValue();
+public class ProjectParser {
 
 }

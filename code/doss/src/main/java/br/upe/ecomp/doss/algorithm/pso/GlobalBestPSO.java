@@ -1,6 +1,6 @@
 /**
  * Copyright (C) 2010
- * Rodrigo Castro
+ * Swarm Intelligence Team (SIT)
  * Department of Computer and Systems
  * University of Pernambuco
  * Brazil
