@@ -29,7 +29,7 @@ import br.upe.ecomp.doss.problem.Problem1;
 import br.upe.ecomp.doss.recorder.FileRecorder;
 import br.upe.ecomp.doss.recorder.IRecorder;
 import br.upe.ecomp.doss.stopCondition.IStopCondition;
-import br.upe.ecomp.doss.stopCondition.MaximunIterationsStopCondition;
+import br.upe.ecomp.doss.stopCondition.MaximumIterationsStopCondition;
 
 /**
  * Main class for tests purposes.
@@ -44,7 +44,7 @@ public class Main {
      * @param args Possible arguments for the main class.
      */
     public static void main(String[] args) {
-        MaximunIterationsStopCondition stopCondition = new MaximunIterationsStopCondition();
+        MaximumIterationsStopCondition stopCondition = new MaximumIterationsStopCondition();
         stopCondition.setMaximumIterations(20);
         List<IStopCondition> stopConditions = new ArrayList<IStopCondition>();
         stopConditions.add(stopCondition);
