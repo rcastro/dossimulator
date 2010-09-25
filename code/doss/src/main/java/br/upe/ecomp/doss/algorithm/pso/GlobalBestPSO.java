@@ -21,6 +21,9 @@
  */
 package br.upe.ecomp.doss.algorithm.pso;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Implementation of the Global Best PSO algorithm.
  * 
@@ -28,44 +31,94 @@ package br.upe.ecomp.doss.algorithm.pso;
  */
 public class GlobalBestPSO extends PSO {
 
-    /**
-     * Creates a new instance of this class.
-     */
-    public GlobalBestPSO() {
-        super();
-    }
+	public static final String SWARM_SIZE = "Swarm size";
 
-    /**
-     * {@inheritDoc}
-     */
-    public String getName() {
-        return "Global Best PSO";
-    }
+	// The cognitive component
+	public static final String C1 = "C1";
+	// The social component
+	public static final String C2 = "C2";
 
-    /**
-     * {@inheritDoc}
-     */
-    public String getDescription() {
-        return "An implementation of the global best PSO algorithm.";
-    }
+	private Map<String, Class<?>> parametersMap;
 
-    /**
-     * {@inheritDoc}
-     */
-    protected PSOParticle getBestParticleNeighborhood(int index) {
-        int indexBestParticle = index;
-        double bestParticleFitness = getProblem().getFitness(((PSOParticle) getParticles()[index]).getBestPosition());
-        double currentParticleFitness;
+	/**
+	 * Creates a new instance of this class.
+	 */
+	public GlobalBestPSO() {
+		super();
+		initParametersMap();
+	}
 
-        for (int i = 0; i < getSwarmSize(); i++) {
-            currentParticleFitness = getProblem().getFitness(((PSOParticle) getParticles()[i]).getBestPosition());
+	/**
+	 * initializes the parameters map.
+	 */
+	private void initParametersMap() {
+		parametersMap = new HashMap<String, Class<?>>();
+		parametersMap.put(SWARM_SIZE, Integer.class);
+		parametersMap.put(C1, Double.class);
+		parametersMap.put(C2, Double.class);
+	}
 
-            if (getProblem().compareFitness(bestParticleFitness, currentParticleFitness)) {
-                indexBestParticle = i;
-                bestParticleFitness = currentParticleFitness;
-            }
-        }
+	/**
+	 * {@inheritDoc}
+	 */
+	public String getName() {
+		return "Global Best PSO";
+	}
 
-        return (PSOParticle) getParticles()[indexBestParticle];
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	public String getDescription() {
+		return "An implementation of the global best PSO algorithm.";
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	protected PSOParticle getBestParticleNeighborhood(int index) {
+		int indexBestParticle = index;
+		double bestParticleFitness = getProblem().getFitness(
+				((PSOParticle) getParticles()[index]).getBestPosition());
+		double currentParticleFitness;
+
+		for (int i = 0; i < getSwarmSize(); i++) {
+			currentParticleFitness = getProblem().getFitness(
+					((PSOParticle) getParticles()[i]).getBestPosition());
+
+			if (getProblem().compareFitness(bestParticleFitness, currentParticleFitness)) {
+				indexBestParticle = i;
+				bestParticleFitness = currentParticleFitness;
+			}
+		}
+
+		return (PSOParticle) getParticles()[indexBestParticle];
+	}
+
+	@Override
+	public void setParameterByName(String name, Object value) {
+		if (name.equals(SWARM_SIZE)) {
+			setSwarmSize((Integer) value);
+		}
+		if (name.equals(C1)) {
+			setC1((Double) value);
+		}
+		if (name.equals(C2)) {
+			setC2((Double) value);
+		}
+	}
+
+	@Override
+	public Object getParameterByName(String name) {
+		if (name.equals(SWARM_SIZE)) {
+			return getSwarmSize();
+		}
+		if (name.equals(C1)) {
+			return getC1();
+		}
+		if (name.equals(C2)) {
+			return getC2();
+		}
+		return null;
+	}
+
 }

@@ -37,199 +37,220 @@ import br.upe.ecomp.doss.stopCondition.IStopCondition;
  */
 public abstract class Algorithm implements Runnable, Configurable {
 
-    private IProblem problem;
-    private List<IStopCondition> stopConditions;
-    private List<IMeasurement> measurements;
-    private Particle[] particles;
-    private IRecorder recorder;
-    private int iterations;
+	private IProblem problem;
+	private List<IStopCondition> stopConditions;
+	private List<IMeasurement> measurements;
+	private Particle[] particles;
+	private IRecorder recorder;
+	private int iterations;
 
-    /**
-     * Makes the initial setup required for the begging of the algorithm execution.
-     */
-    public abstract void init();
+	/**
+	 * Makes the initial setup required for the begging of the algorithm
+	 * execution.
+	 */
+	public abstract void init();
 
-    /**
-     * {@inheritDoc}
-     */
-    public void run() {
-        init();
-        recorder.init(this);
-        do {
-            iterate();
-            iterations += 1;
-            for (IMeasurement measurement : measurements) {
-                measurement.update(this);
-            }
-            recorder.update(this);
-        } while (!isStop());
-        recorder.finalise();
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	public void run() {
+		init();
+		recorder.init(this);
+		do {
+			iterate();
+			iterations += 1;
+			for (IMeasurement measurement : measurements) {
+				measurement.update(this);
+			}
+			recorder.update(this);
+		} while (!isStop());
+		recorder.finalise();
+	}
 
-    /**
-     * Verifies if any of the stop conditions registered to the current execution of this algorithm
-     * was reached.<br />
-     * The stop conditions are checked in the order they were registered.
-     * 
-     * @return <code>true</code> if any stop condition was reached, otherwise returns
-     *         <code>false</code>.
-     */
-    public boolean isStop() {
-        boolean result = false;
-        for (IStopCondition stopCondition : stopConditions) {
-            result = stopCondition.isStop(this);
-            if (result) {
-                break;
-            }
-        }
-        return result;
-    }
+	/**
+	 * Verifies if any of the stop conditions registered to the current
+	 * execution of this algorithm was reached.<br />
+	 * The stop conditions are checked in the order they were registered.
+	 * 
+	 * @return <code>true</code> if any stop condition was reached, otherwise
+	 *         returns <code>false</code>.
+	 */
+	public boolean isStop() {
+		boolean result = false;
+		for (IStopCondition stopCondition : stopConditions) {
+			result = stopCondition.isStop(this);
+			if (result) {
+				break;
+			}
+		}
+		return result;
+	}
 
-    /**
-     * Executes one iteration of the algorithm. This is the main method of the algorithm, here
-     * should go all the logic of its execution.
-     */
-    public abstract void iterate();
+	/**
+	 * Executes one iteration of the algorithm. This is the main method of the
+	 * algorithm, here should go all the logic of its execution.
+	 */
+	public abstract void iterate();
 
-    /**
-     * Returns the particles participating of the current execution.
-     * 
-     * @return The particles participating of the current execution.
-     */
-    public Particle[] getParticles() {
-        return particles;
-    }
+	/**
+	 * Returns the particles participating of the current execution.
+	 * 
+	 * @return The particles participating of the current execution.
+	 */
+	public Particle[] getParticles() {
+		return particles;
+	}
 
-    /**
-     * Sets the particles that will participate of the execution of this algorithm.
-     * 
-     * @param particles The particles that will participate of the execution of this algorithm.
-     */
-    public void setParticles(Particle[] particles) {
-        this.particles = particles;
-    }
+	/**
+	 * Returns the best solution of the current iteration.
+	 * 
+	 * @return the best solution of the current iteration.
+	 */
+	public abstract double[] getBestSolution();
 
-    /**
-     * Returns the number of the current iteration.
-     * 
-     * @return The number of the current iteration.
-     */
-    public int getIterations() {
-        return iterations;
-    }
+	/**
+	 * Returns the value of best solution of the current iteration.
+	 * 
+	 * @return the value of best solution of the current iteration.
+	 */
+	public abstract double getBestSolutionValue();
 
-    /**
-     * Sets the current iteration number.
-     * 
-     * @param iterations The current iteration number.
-     */
-    public void setIterations(int iterations) {
-        this.iterations = iterations;
-    }
+	/**
+	 * Sets the particles that will participate of the execution of this
+	 * algorithm.
+	 * 
+	 * @param particles The particles that will participate of the execution of
+	 *            this algorithm.
+	 */
+	public void setParticles(Particle[] particles) {
+		this.particles = particles;
+	}
 
-    /**
-     * Returns the current problem being solved.
-     * 
-     * @return The current problem being solved.
-     */
-    public IProblem getProblem() {
-        return problem;
-    }
+	/**
+	 * Returns the number of the current iteration.
+	 * 
+	 * @return The number of the current iteration.
+	 */
+	public int getIterations() {
+		return iterations;
+	}
 
-    /**
-     * Sets the problem to be solved.
-     * 
-     * @param problem The problem to be solved.
-     */
-    public void setProblem(IProblem problem) {
-        this.problem = problem;
-    }
+	/**
+	 * Sets the current iteration number.
+	 * 
+	 * @param iterations The current iteration number.
+	 */
+	public void setIterations(int iterations) {
+		this.iterations = iterations;
+	}
 
-    /**
-     * Returns the list of stop conditions registered to the current execution of this algorithm.
-     * 
-     * @return The list of stop conditions registered to the current execution of this algorithm.
-     */
-    public List<IStopCondition> getStopConditions() {
-        return stopConditions;
-    }
+	/**
+	 * Returns the current problem being solved.
+	 * 
+	 * @return The current problem being solved.
+	 */
+	public IProblem getProblem() {
+		return problem;
+	}
 
-    /**
-     * Sets the list of stop conditions of this algorithm.
-     * 
-     * @param stopConditions The list of stop conditions of this algorithm.
-     */
-    public void setStopConditions(List<IStopCondition> stopConditions) {
-        this.stopConditions = stopConditions;
-    }
+	/**
+	 * Sets the problem to be solved.
+	 * 
+	 * @param problem The problem to be solved.
+	 */
+	public void setProblem(IProblem problem) {
+		this.problem = problem;
+	}
 
-    /**
-     * Returns the list of measurements registered to the current execution of this algorithm.
-     * 
-     * @return The list of measurements registered to the current execution of this algorithm.
-     */
-    public List<IMeasurement> getMeasurements() {
-        return measurements;
-    }
+	/**
+	 * Returns the list of stop conditions registered to the current execution
+	 * of this algorithm.
+	 * 
+	 * @return The list of stop conditions registered to the current execution
+	 *         of this algorithm.
+	 */
+	public List<IStopCondition> getStopConditions() {
+		return stopConditions;
+	}
 
-    /**
-     * Sets the list of measurement for this algorithm.
-     * 
-     * @param measurements The list of measurement for this algorithm.
-     */
-    public void setMeasurements(List<IMeasurement> measurements) {
-        this.measurements = measurements;
-    }
+	/**
+	 * Sets the list of stop conditions of this algorithm.
+	 * 
+	 * @param stopConditions The list of stop conditions of this algorithm.
+	 */
+	public void setStopConditions(List<IStopCondition> stopConditions) {
+		this.stopConditions = stopConditions;
+	}
 
-    /**
-     * Returns the recorder instance registered to save the results of this algorithm after
-     * each iteration.
-     * 
-     * @return The recorder instance registered to save the results of this algorithm after each
-     *         iteration.
-     */
-    public IRecorder getRecorder() {
-        return recorder;
-    }
+	/**
+	 * Returns the list of measurements registered to the current execution of
+	 * this algorithm.
+	 * 
+	 * @return The list of measurements registered to the current execution of
+	 *         this algorithm.
+	 */
+	public List<IMeasurement> getMeasurements() {
+		return measurements;
+	}
 
-    /**
-     * Sets the recorder instance that will be used to save the results of this algorithm after each
-     * iteration.
-     * 
-     * @param recorder The recorder instance that will be used to save the results of this algorithm
-     *            after each iteration.
-     */
-    public void setRecorder(IRecorder recorder) {
-        this.recorder = recorder;
-    }
+	/**
+	 * Sets the list of measurement for this algorithm.
+	 * 
+	 * @param measurements The list of measurement for this algorithm.
+	 */
+	public void setMeasurements(List<IMeasurement> measurements) {
+		this.measurements = measurements;
+	}
 
-    @Override
-    public String toString() {
-        return getName();
-    }
+	/**
+	 * Returns the recorder instance registered to save the results of this
+	 * algorithm after each iteration.
+	 * 
+	 * @return The recorder instance registered to save the results of this
+	 *         algorithm after each iteration.
+	 */
+	public IRecorder getRecorder() {
+		return recorder;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    public abstract String getName();
+	/**
+	 * Sets the recorder instance that will be used to save the results of this
+	 * algorithm after each iteration.
+	 * 
+	 * @param recorder The recorder instance that will be used to save the
+	 *            results of this algorithm after each iteration.
+	 */
+	public void setRecorder(IRecorder recorder) {
+		this.recorder = recorder;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    public abstract String getDescription();
+	@Override
+	public String toString() {
+		return getName();
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    public abstract Map<String, Class<?>> getParametersMap();
+	/**
+	 * {@inheritDoc}
+	 */
+	public abstract String getName();
 
-    /**
-     * {@inheritDoc}
-     */
-    public abstract void setParameterByName(String name, Object value);
+	/**
+	 * {@inheritDoc}
+	 */
+	public abstract String getDescription();
 
-    /**
-     * {@inheritDoc}
-     */
-    public abstract Object getParameterByName(String name);
+	/**
+	 * {@inheritDoc}
+	 */
+	public abstract Map<String, Class<?>> getParametersMap();
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public abstract void setParameterByName(String name, Object value);
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public abstract Object getParameterByName(String name);
 }

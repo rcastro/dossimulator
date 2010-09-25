@@ -19,88 +19,47 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
-package br.upe.ecomp.doss.problem;
-
-import static java.lang.Math.pow;
+package br.upe.ecomp.doss.measurement;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import br.upe.ecomp.doss.algorithm.Algorithm;
+
 /**
- * Problem 1 to test the implementation of the PSO algorithm.
  * 
  * @author Rodrigo Castro
  */
-public class Problem1 implements IProblem {
+public class MeanFitness implements IMeasurement {
 
 	private Map<String, Class<?>> parametersMap;
+	private double sumBestFitness;
+	private double mean;
 
 	/**
 	 * Default constructor.
 	 */
-	public Problem1() {
+	public MeanFitness() {
+		sumBestFitness = 0;
+		mean = 0;
 		parametersMap = new HashMap<String, Class<?>>();
-		parametersMap.put("Dimensions", Integer.class);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public void init() {
-
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public String getName() {
-		return "Test for Problem 1";
+		return "Mean Fitness";
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public String getDescription() {
-		return "Problem number 1 to test the PSO algorithm.";
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public int getDimensionsNumber() {
-		return 2;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public double getLowerLimit(int dimension) {
-		return -5.12;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public double getUpperLimit(int dimension) {
-		return 5.12;
-	}
-
-	/**
-	 * This is a minimization problem. {@inheritDoc}
-	 */
-	public boolean compareFitness(double pBestFitness, double currentPositionFitness) {
-		return currentPositionFitness < pBestFitness;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public double getFitness(double... dimension) {
-		double sphere = 0.0;
-		for (int i = 0; i < dimension.length; i++) {
-			sphere += pow(dimension[i], 2);
-		}
-		return sphere;
+		return "Mean Fitness is the average over all previous fitness values. "
+				+ "This measurement is a representative performance measurement in "
+				+ "a dynamic environment, becouse it reflects algorithm performance "
+				+ "across the entire range of landscape dynamics.";
 	}
 
 	/**
@@ -121,7 +80,23 @@ public class Problem1 implements IProblem {
 	 * {@inheritDoc}
 	 */
 	public Object getParameterByName(String name) {
-		return 3;
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public void update(Algorithm algorithm) {
+		sumBestFitness += algorithm.getBestSolutionValue();
+		mean = sumBestFitness / algorithm.getIterations();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public double getValue() {
+		return mean;
 	}
 
 	@Override
