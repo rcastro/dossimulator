@@ -31,80 +31,85 @@ import br.upe.ecomp.doss.algorithm.Algorithm;
  * 
  * @author Rodrigo Castro
  */
-public class MaximumIterationsStopCondition implements IStopCondition {
+public class MaximumIterationsStopCondition extends StopCondition {
 
-	public static final String MAX_ITERATIONS = "Maximum iterations";
+    public static final String MAXIMUM_ITERATIONS = "Maximum iterations";
 
-	private Map<String, Class<?>> parametersMap;
-	private int maximumIterations;
+    private Map<String, Class<?>> parametersMap;
+    private int maximumIterations;
 
-	/**
-	 * Creates a new instance of this class.
-	 */
-	public MaximumIterationsStopCondition() {
-		parametersMap = new HashMap<String, Class<?>>();
-		parametersMap.put(MAX_ITERATIONS, Integer.class);
-	}
+    /**
+     * Creates a new instance of this class.
+     */
+    public MaximumIterationsStopCondition() {
+        initParametersMap();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public String getName() {
-		return "Maximum number of iterarions";
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public String getName() {
+        return "Maximum number of iterarions";
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public String getDescription() {
-		return "Stops the execution of the algorithm after the given number of iterations.";
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public String getDescription() {
+        return "Stops the execution of the algorithm after the given number of iterations.";
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public boolean isStop(Algorithm algorithm) {
-		return algorithm.getIterations() > maximumIterations;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isStop(Algorithm algorithm) {
+        return algorithm.getIterations() > maximumIterations;
+    }
 
-	/**
-	 * Sets the maximum number of iterations of the algorithm.
-	 * 
-	 * @param maximumIterations The maximum number of iterations of the
-	 *            algorithm.
-	 */
-	public void setMaximumIterations(int maximumIterations) {
-		this.maximumIterations = maximumIterations;
-	}
+    /**
+     * Sets the maximum number of iterations of the algorithm.
+     * 
+     * @param maximumIterations The maximum number of iterations of the
+     *            algorithm.
+     */
+    public void setMaximumIterations(int maximumIterations) {
+        this.maximumIterations = maximumIterations;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public Map<String, Class<?>> getParametersMap() {
-		return parametersMap;
-	}
+    private void initParametersMap() {
+        parametersMap = new HashMap<String, Class<?>>();
+        parametersMap.put(MAXIMUM_ITERATIONS, Integer.class);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public void setParameterByName(String name, Object value) {
-		if (name.equals(MAX_ITERATIONS)) {
-			maximumIterations = (Integer) value;
-		}
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public Map<String, Class<?>> getParametersMap() {
+        return parametersMap;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public Object getParameterByName(String name) {
-		if (name.equals(MAX_ITERATIONS)) {
-			return maximumIterations;
-		}
-		return null;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public void setParameterByName(String name, Object value) {
+        if (name.equals(MAXIMUM_ITERATIONS)) {
+            maximumIterations = (Integer) value;
+        }
+    }
 
-	@Override
-	public String toString() {
-		return getName();
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public Object getParameterByName(String name) {
+        Object value = null;
+        if (name.equals(MAXIMUM_ITERATIONS)) {
+            value = maximumIterations;
+        }
+        return value;
+    }
+
+    @Override
+    public String toString() {
+        return getName();
+    }
 }

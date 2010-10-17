@@ -30,15 +30,17 @@ import br.upe.ecomp.doss.algorithm.Algorithm;
  * 
  * @author Rodrigo Castro
  */
-public class Measurement1 implements IMeasurement {
+public class Measurement1 extends Measurement {
 
     private Map<String, Class<?>> parametersMap;
+    private Double fitness;
 
     /**
      * Default constructor.
      */
     public Measurement1() {
         parametersMap = new HashMap<String, Class<?>>();
+        fitness = 0D;
     }
 
     /**
@@ -81,15 +83,14 @@ public class Measurement1 implements IMeasurement {
      * {@inheritDoc}
      */
     public void update(Algorithm algorithm) {
-        // TODO Auto-generated method stub
+        fitness = algorithm.getBestSolutionValue();
     }
 
     /**
      * {@inheritDoc}
      */
     public double getValue() {
-        // TODO Auto-generated method stub
-        return 0;
+        return fitness;
     }
 
     @Override

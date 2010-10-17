@@ -30,77 +30,77 @@ import br.upe.ecomp.doss.algorithm.Algorithm;
  * 
  * @author Rodrigo Castro
  */
-public class MeanFitness implements IMeasurement {
+public class MeanFitness extends Measurement {
 
-	private Map<String, Class<?>> parametersMap;
-	private double sumBestFitness;
-	private double mean;
+    private Map<String, Class<?>> parametersMap;
+    private double sumBestFitness;
+    private double mean;
 
-	/**
-	 * Default constructor.
-	 */
-	public MeanFitness() {
-		sumBestFitness = 0;
-		mean = 0;
-		parametersMap = new HashMap<String, Class<?>>();
-	}
+    /**
+     * Default constructor.
+     */
+    public MeanFitness() {
+        sumBestFitness = 0;
+        mean = 0;
+        parametersMap = new HashMap<String, Class<?>>();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public String getName() {
-		return "Mean Fitness";
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public String getName() {
+        return "Mean Fitness";
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public String getDescription() {
-		return "Mean Fitness is the average over all previous fitness values. "
-				+ "This measurement is a representative performance measurement in "
-				+ "a dynamic environment, becouse it reflects algorithm performance "
-				+ "across the entire range of landscape dynamics.";
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public String getDescription() {
+        return "Mean Fitness is the average over all previous fitness values. "
+                + "This measurement is a representative performance measurement in "
+                + "a dynamic environment, becouse it reflects algorithm performance "
+                + "across the entire range of landscape dynamics.";
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public Map<String, Class<?>> getParametersMap() {
-		return parametersMap;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public Map<String, Class<?>> getParametersMap() {
+        return parametersMap;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public void setParameterByName(String name, Object value) {
-		// TODO Auto-generated method stub
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public void setParameterByName(String name, Object value) {
+        // TODO Auto-generated method stub
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public Object getParameterByName(String name) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public Object getParameterByName(String name) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public void update(Algorithm algorithm) {
-		sumBestFitness += algorithm.getBestSolutionValue();
-		mean = sumBestFitness / algorithm.getIterations();
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public void update(Algorithm algorithm) {
+        sumBestFitness += algorithm.getBestSolutionValue();
+        mean = sumBestFitness / algorithm.getIterations();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public double getValue() {
-		return mean;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public double getValue() {
+        return mean;
+    }
 
-	@Override
-	public String toString() {
-		return getName();
-	}
+    @Override
+    public String toString() {
+        return getName();
+    }
 }

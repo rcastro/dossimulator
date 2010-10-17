@@ -22,21 +22,57 @@
 package br.upe.ecomp.doss.core;
 
 import br.upe.ecomp.doss.algorithm.Algorithm;
+import br.upe.ecomp.doss.core.parser.AlgorithmXMLParser;
+import br.upe.ecomp.doss.recorder.FileRecorder;
+import br.upe.ecomp.doss.recorder.IRecorder;
 
 /**
  * Class responsible for run the algorithms.
  * 
  * @author Rodrigo Castro
  */
-public class Runner {
+public class Runner implements Runnable {
+
+    private String filePath;
+    private String fileName;
+    private int numberSimulations;
+    private IRecorder recorder;
 
     /**
-     * Runs an algorithm.
+     * Configures the Runner algorithm.
      * 
      * @param algorithm The algorithm that we want to run.
+     * @param numberSimulations The number of simulations that will be executed.
      */
+    public Runner(String filePath, String fileName, int numberSimulations, IRecorder recorder) {
+        this.filePath = filePath;
+        this.fileName = fileName;
+        this.numberSimulations = numberSimulations;
+        this.recorder = recorder;
+    }
+
+    public Runner() {
+    }
+
+    public void run() {
+        Thread thread;
+        Algorithm algorithm;
+        for (int i = 0; i < numberSimulations; i++) {
+            algorithm = AlgorithmXMLParser.read(filePath, fileName);
+            algorithm.setRecorder(new FileRecorder());
+            thread = new Thread(algorithm);
+            thread.run();
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     public void runAlgorithm(Algorithm algorithm) {
-        Thread thread = new Thread(algorithm);
+        Thread thread;
+        thread = new Thread(algorithm);
         thread.run();
     }
 }

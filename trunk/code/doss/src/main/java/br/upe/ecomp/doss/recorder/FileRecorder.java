@@ -26,10 +26,12 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 
 import br.upe.ecomp.doss.algorithm.Algorithm;
 import br.upe.ecomp.doss.algorithm.Particle;
-import br.upe.ecomp.doss.measurement.IMeasurement;
+import br.upe.ecomp.doss.measurement.Measurement;
 
 /**
  * A file based implementation of {@link IRecorder}.
@@ -43,19 +45,18 @@ public class FileRecorder implements IRecorder {
     private String executionDirectoryName;
     private String fileName;
     private String filePath;
-    private String problemName;
+    private String algorithmName;
 
     /**
      * {@inheritDoc}
      */
     public void init(Algorithm algorithm) {
-        this.problemName = algorithm.getProblem().getName();
-        createProblemDirectory();
-        createExecutionDirectory();
+        this.algorithmName = algorithm.getName();
+        createAlgorithmDirectory();
 
-        filePath = problemDirectoryName + File.separatorChar + executionDirectoryName + File.separatorChar;
+        filePath = problemDirectoryName + File.separatorChar + File.separatorChar;
         createFile();
-        printFileHeader();
+        printFileHeader(algorithm);
     }
 
     /**
@@ -74,7 +75,7 @@ public class FileRecorder implements IRecorder {
 
         printMeasurementHeader(algorithm.getIterations());
 
-        for (IMeasurement measurement : algorithm.getMeasurements()) {
+        for (Measurement measurement : algorithm.getMeasurements()) {
             printMeasurement(measurement);
         }
     }
@@ -82,26 +83,40 @@ public class FileRecorder implements IRecorder {
     /**
      * {@inheritDoc}
      */
-    public void finalise() {
+    public void finalise(Algorithm algorithm) {
         try {
-            file.close();
+            file.write("Total iterations: " + algorithm.getIterations());
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
             try {
-                file.close();
+                if (file != null) {
+                    file.close();
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
     }
 
-    private void printFileHeader() {
+    private void printFileHeader(Algorithm algorithm) {
         try {
-            file.write("Problem: " + problemName + "\n");
+            file.write("Problem: " + algorithmName + "\n");
+            file.write("Measurements: " + getMeasurementsList(algorithm.getMeasurements()) + "\n");
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private String getMeasurementsList(List<Measurement> measurements) {
+        StringBuilder sbMeasurements = new StringBuilder();
+        for (Iterator<Measurement> iterator = measurements.iterator(); iterator.hasNext();) {
+            sbMeasurements.append(iterator.next().getName());
+            if (iterator.hasNext()) {
+                sbMeasurements.append(", ");
+            }
+        }
+        return sbMeasurements.toString();
     }
 
     private void printMeasurementHeader(int iteration) {
@@ -137,9 +152,9 @@ public class FileRecorder implements IRecorder {
         }
     }
 
-    private void printMeasurement(IMeasurement measurement) {
+    private void printMeasurement(Measurement measurement) {
         StringBuilder line = new StringBuilder(measurement.getName());
-        line.append(":");
+        line.append(": ");
         line.append(measurement.getValue());
         line.append("\n");
 
@@ -150,8 +165,8 @@ public class FileRecorder implements IRecorder {
         }
     }
 
-    private void createProblemDirectory() {
-        problemDirectoryName = problemName.replace(" ", "_");
+    private void createAlgorithmDirectory() {
+        problemDirectoryName = algorithmName.replace(" ", "_");
 
         File directory = new File(problemDirectoryName);
         if (!directory.isDirectory()) {
@@ -170,7 +185,7 @@ public class FileRecorder implements IRecorder {
     }
 
     private void createFile() {
-        SimpleDateFormat s = new SimpleDateFormat("hhmmss");
+        SimpleDateFormat s = new SimpleDateFormat("ddMMyyyy_hhmmss");
         fileName = s.format(new Date());
 
         try {

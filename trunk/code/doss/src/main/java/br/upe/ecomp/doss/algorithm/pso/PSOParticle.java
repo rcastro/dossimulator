@@ -24,7 +24,7 @@ package br.upe.ecomp.doss.algorithm.pso;
 import java.util.Random;
 
 import br.upe.ecomp.doss.algorithm.Particle;
-import br.upe.ecomp.doss.problem.IProblem;
+import br.upe.ecomp.doss.problem.Problem;
 
 /**
  * An specialization of the {@link Particle} class for the PSO algorithm.
@@ -51,7 +51,7 @@ public class PSOParticle extends Particle {
      * 
      * @param problem The problem we are trying to solve.
      */
-    public void updatePBest(IProblem problem) {
+    public void updatePBest(Problem problem) {
         double currentParticleFitness = problem.getFitness(getCurrentPosition());
         double pBestFitness = problem.getFitness(getBestPosition());
 
@@ -85,13 +85,13 @@ public class PSOParticle extends Particle {
      * 
      * @param problem The problem that we are trying to solve.
      */
-    public void updateCurrentPosition(IProblem problem) {
+    public void updateCurrentPosition(Problem problem) {
         double[] position = getCurrentPosition();
         for (int i = 0; i < getDimensions(); i++) {
             position[i] = position[i] + velocity[i];
 
-            position[i] = (position[i] <= problem.getUpperLimit(i)) ? position[i] : problem.getUpperLimit(i);
-            position[i] = (position[i] >= problem.getLowerLimit(i)) ? position[i] : problem.getLowerLimit(i);
+            position[i] = (position[i] <= problem.getUpperBound(i)) ? position[i] : problem.getUpperBound(i);
+            position[i] = (position[i] >= problem.getLowerBound(i)) ? position[i] : problem.getLowerBound(i);
         }
         updateCurrentPosition(position, problem.getFitness(position));
     }
