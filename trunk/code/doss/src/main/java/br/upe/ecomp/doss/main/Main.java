@@ -22,7 +22,6 @@
 package br.upe.ecomp.doss.main;
 
 import br.upe.ecomp.doss.core.Runner;
-import br.upe.ecomp.doss.recorder.FileRecorder;
 
 /**
  * Main class for tests purposes.
@@ -37,7 +36,7 @@ public class Main {
      * @param args Possible arguments for the main class.
      */
     public static void main(String[] args) {
-        Runner runner = new Runner("/Users/rodrigo/Desktop", "pso.xml", 1, new FileRecorder());
+        Runner runner = new Runner("/Users/rodrigo/Desktop", "pso.xml", 1, true);
         runner.run();
     }
 }

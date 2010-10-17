@@ -86,7 +86,7 @@ public class RandomPeaksProblem extends Problem {
      * {@inheritDoc}
      */
     public boolean compareFitness(double pBestFitness, double currentPositionFitness) {
-        return currentPositionFitness > pBestFitness;
+        return currentPositionFitness < pBestFitness;
     }
 
     /**
