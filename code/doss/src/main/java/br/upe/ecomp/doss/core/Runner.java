@@ -21,10 +21,14 @@
  */
 package br.upe.ecomp.doss.core;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import br.upe.ecomp.doss.algorithm.Algorithm;
 import br.upe.ecomp.doss.core.parser.AlgorithmXMLParser;
+import br.upe.ecomp.doss.recorder.ChartRecorder;
 import br.upe.ecomp.doss.recorder.FileRecorder;
-import br.upe.ecomp.doss.recorder.IRecorder;
+import br.upe.ecomp.doss.view.ChartRunner;
 
 /**
  * Class responsible for run the algorithms.
@@ -36,43 +40,57 @@ public class Runner implements Runnable {
     private String filePath;
     private String fileName;
     private int numberSimulations;
-    private IRecorder recorder;
+    private boolean showSimulation;
+    private List<RunnerListener> listeners;
 
     /**
      * Configures the Runner algorithm.
      * 
-     * @param algorithm The algorithm that we want to run.
+     * @param filePath The algorithm that we want to run.
+     * @param fileName .
      * @param numberSimulations The number of simulations that will be executed.
      */
-    public Runner(String filePath, String fileName, int numberSimulations, IRecorder recorder) {
+    public Runner(String filePath, String fileName, int numberSimulations, boolean showSimulation) {
         this.filePath = filePath;
         this.fileName = fileName;
         this.numberSimulations = numberSimulations;
-        this.recorder = recorder;
+        this.showSimulation = showSimulation;
+
+        this.listeners = new ArrayList<RunnerListener>();
     }
 
-    public Runner() {
-    }
-
+    /**
+     * {@inheritDoc}
+     */
     public void run() {
-        Thread thread;
         Algorithm algorithm;
         for (int i = 0; i < numberSimulations; i++) {
             algorithm = AlgorithmXMLParser.read(filePath, fileName);
-            algorithm.setRecorder(new FileRecorder());
-            thread = new Thread(algorithm);
-            thread.run();
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+
+            if (!showSimulation) {
+                algorithm.setRecorder(new FileRecorder());
+                algorithm.setShowSimulation(false);
+                algorithm.run();
+            } else {
+                algorithm.setRecorder(new ChartRecorder());
+                algorithm.setShowSimulation(true);
+                new ChartRunner().runChart(algorithm);
             }
+            if (!showSimulation) {
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        for (RunnerListener listener : listeners) {
+            listener.onSimulationFinish();
         }
     }
 
-    public void runAlgorithm(Algorithm algorithm) {
-        Thread thread;
-        thread = new Thread(algorithm);
-        thread.run();
+    public void addLitener(RunnerListener listener) {
+        listeners.add(listener);
     }
 }

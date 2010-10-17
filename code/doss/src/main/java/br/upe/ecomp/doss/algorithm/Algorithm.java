@@ -46,6 +46,7 @@ public abstract class Algorithm implements Runnable, Configurable {
     private Particle[] particles;
     private IRecorder recorder;
     private int iterations;
+    private boolean showSimulation;
 
     /**
      * Makes the initial setup required for the begging of the algorithm
@@ -67,6 +68,13 @@ public abstract class Algorithm implements Runnable, Configurable {
             }
             recorder.update(this);
             iterations += 1;
+            if (showSimulation) {
+                try {
+                    Thread.sleep(250);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
         } while (!isStop());
 
         // We increment iterations before the iteration actually occur
@@ -229,6 +237,14 @@ public abstract class Algorithm implements Runnable, Configurable {
      */
     public void setRecorder(IRecorder recorder) {
         this.recorder = recorder;
+    }
+
+    public boolean isShowSimulation() {
+        return showSimulation;
+    }
+
+    public void setShowSimulation(boolean showSimulation) {
+        this.showSimulation = showSimulation;
     }
 
     @Override
