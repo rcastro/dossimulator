@@ -21,20 +21,8 @@
  */
 package br.upe.ecomp.doss.main;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import br.upe.ecomp.doss.algorithm.Algorithm;
-import br.upe.ecomp.doss.algorithm.pso.GlobalBestPSO;
 import br.upe.ecomp.doss.core.Runner;
-import br.upe.ecomp.doss.measurement.IMeasurement;
-import br.upe.ecomp.doss.measurement.MeanFitness;
-import br.upe.ecomp.doss.problem.IProblem;
-import br.upe.ecomp.doss.problem.Problem1;
-import br.upe.ecomp.doss.recorder.ConsoleRecorder;
-import br.upe.ecomp.doss.recorder.IRecorder;
-import br.upe.ecomp.doss.stopCondition.IStopCondition;
-import br.upe.ecomp.doss.stopCondition.MaximumIterationsStopCondition;
+import br.upe.ecomp.doss.recorder.FileRecorder;
 
 /**
  * Main class for tests purposes.
@@ -43,33 +31,13 @@ import br.upe.ecomp.doss.stopCondition.MaximumIterationsStopCondition;
  */
 public class Main {
 
-	/**
-	 * Main method.
-	 * 
-	 * @param args Possible arguments for the main class.
-	 */
-	public static void main(String[] args) {
-		MaximumIterationsStopCondition stopCondition = new MaximumIterationsStopCondition();
-		stopCondition.setParameterByName(MaximumIterationsStopCondition.MAX_ITERATIONS, 100);
-		List<IStopCondition> stopConditions = new ArrayList<IStopCondition>();
-		stopConditions.add(stopCondition);
-
-		IProblem problem = new Problem1();
-		IRecorder recorder = new ConsoleRecorder();
-		IMeasurement meanFitness = new MeanFitness();
-		List<IMeasurement> measurements = new ArrayList<IMeasurement>();
-		measurements.add(meanFitness);
-
-		Algorithm algorithm = new GlobalBestPSO();
-		algorithm.setParameterByName(GlobalBestPSO.SWARM_SIZE, 30);
-		algorithm.setParameterByName(GlobalBestPSO.C1, 0.5);
-		algorithm.setParameterByName(GlobalBestPSO.C2, 0.5);
-
-		algorithm.setProblem(problem);
-		algorithm.setRecorder(recorder);
-		algorithm.setStopConditions(stopConditions);
-		algorithm.setMeasurements(measurements);
-
-		new Runner().runAlgorithm(algorithm);
-	}
+    /**
+     * Main method.
+     * 
+     * @param args Possible arguments for the main class.
+     */
+    public static void main(String[] args) {
+        Runner runner = new Runner("/Users/rodrigo/Desktop", "pso.xml", 1, new FileRecorder());
+        runner.run();
+    }
 }

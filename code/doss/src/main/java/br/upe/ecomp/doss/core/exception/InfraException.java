@@ -19,31 +19,40 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
-package br.upe.ecomp.doss.measurement;
-
-import br.upe.ecomp.doss.algorithm.Algorithm;
-import br.upe.ecomp.doss.core.Configurable;
+package br.upe.ecomp.doss.core.exception;
 
 /**
- * Basic class the defines a Measurement.
+ * Represents a infrastructure exception.
  * 
  * @author Rodrigo Castro
- * 
  */
-public interface IMeasurement extends Configurable {
+public class InfraException extends RuntimeException {
 
     /**
-     * Updates this measure based on the current state of the algorithm.
+     * Constructs a new infrastructure exception with the specified error message.
      * 
-     * @param algorithm The algorithm for which this measure is applied.
+     * @param message The error message.
      */
-    void update(Algorithm algorithm);
+    public InfraException(String message) {
+        this(message, null);
+    }
 
     /**
-     * Returns the current value of this measure.
+     * Constructs a new infrastructure exception with the specified cause.
      * 
-     * @return The current value of this measure.
+     * @param cause The cause.
      */
-    double getValue();
+    public InfraException(Throwable cause) {
+        this(null, cause);
+    }
 
+    /**
+     * Constructs a new infrastructure exception with the specified error message and cause.
+     * 
+     * @param message The error message.
+     * @param cause The cause.
+     */
+    public InfraException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

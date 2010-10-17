@@ -23,7 +23,7 @@ package br.upe.ecomp.doss.recorder;
 
 import br.upe.ecomp.doss.algorithm.Algorithm;
 import br.upe.ecomp.doss.algorithm.Particle;
-import br.upe.ecomp.doss.measurement.IMeasurement;
+import br.upe.ecomp.doss.measurement.Measurement;
 
 /**
  * A console based implementation of {@link IRecorder}.
@@ -32,82 +32,82 @@ import br.upe.ecomp.doss.measurement.IMeasurement;
  */
 public class ConsoleRecorder implements IRecorder {
 
-	private String problemName;
+    private String problemName;
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public void init(Algorithm algorithm) {
-		this.problemName = algorithm.getProblem().getName();
-		printFileHeader();
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public void init(Algorithm algorithm) {
+        this.problemName = algorithm.getProblem().getName();
+        printFileHeader();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public void update(Algorithm algorithm) {
-		double[] position;
+    /**
+     * {@inheritDoc}
+     */
+    public void update(Algorithm algorithm) {
+        double[] position;
 
-		printIterationHeader(algorithm.getIterations());
+        printIterationHeader(algorithm.getIterations());
 
-		Particle[] particles = algorithm.getParticles();
-		for (Particle particle : particles) {
-			position = particle.getCurrentPosition();
-			printPosition(position);
-		}
+        Particle[] particles = algorithm.getParticles();
+        for (Particle particle : particles) {
+            position = particle.getCurrentPosition();
+            printPosition(position);
+        }
 
-		printCurrentBestSolution(algorithm);
-		printMeasurementHeader(algorithm.getIterations());
+        printCurrentBestSolution(algorithm);
+        printMeasurementHeader(algorithm.getIterations());
 
-		for (IMeasurement measurement : algorithm.getMeasurements()) {
-			printMeasurement(measurement);
-		}
-	}
+        for (Measurement measurement : algorithm.getMeasurements()) {
+            printMeasurement(measurement);
+        }
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public void finalise() {
-		System.out.println("End of output!");
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public void finalise(Algorithm algorithm) {
+        System.out.println("End of output!");
+    }
 
-	private void printFileHeader() {
-		System.out.println("Problem: " + problemName);
-	}
+    private void printFileHeader() {
+        System.out.println("Problem: " + problemName);
+    }
 
-	private void printMeasurementHeader(int iteration) {
-		System.out.println("\nMeasurement(s) for iteration " + iteration);
-	}
+    private void printMeasurementHeader(int iteration) {
+        System.out.println("\nMeasurement(s) for iteration " + iteration);
+    }
 
-	private void printIterationHeader(int iteration) {
-		System.out.println("\nIteration " + iteration);
-	}
+    private void printIterationHeader(int iteration) {
+        System.out.println("\nIteration " + iteration);
+    }
 
-	private void printPosition(double[] position) {
-		StringBuilder line = new StringBuilder(String.valueOf(position[0]));
+    private void printPosition(double[] position) {
+        StringBuilder line = new StringBuilder(String.valueOf(position[0]));
 
-		int length = position.length;
-		for (int i = 1; i < length; i++) {
-			line.append(" ");
-			line.append(String.valueOf(position[i]));
-		}
+        int length = position.length;
+        for (int i = 1; i < length; i++) {
+            line.append(" ");
+            line.append(String.valueOf(position[i]));
+        }
 
-		System.out.println(line.toString());
-	}
+        System.out.println(line.toString());
+    }
 
-	private void printCurrentBestSolution(Algorithm algorithm) {
-		System.out.print("Best solution: ");
-		printPosition(algorithm.getBestSolution());
-		System.out.println("Value: " + algorithm.getBestSolutionValue());
-	}
+    private void printCurrentBestSolution(Algorithm algorithm) {
+        System.out.print("Best solution: ");
+        printPosition(algorithm.getBestSolution());
+        System.out.println("Value: " + algorithm.getBestSolutionValue());
+    }
 
-	private void printMeasurement(IMeasurement measurement) {
-		StringBuilder line = new StringBuilder(measurement.getName());
-		line.append(":");
-		line.append(measurement.getValue());
-		line.append("\n");
+    private void printMeasurement(Measurement measurement) {
+        StringBuilder line = new StringBuilder(measurement.getName());
+        line.append(":");
+        line.append(measurement.getValue());
+        line.append("\n");
 
-		System.out.println(line.toString());
-	}
+        System.out.println(line.toString());
+    }
 
 }

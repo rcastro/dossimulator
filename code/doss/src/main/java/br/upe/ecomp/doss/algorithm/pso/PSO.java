@@ -35,261 +35,293 @@ import br.upe.ecomp.doss.stopCondition.MaximumIterationsStopCondition;
  */
 public abstract class PSO extends Algorithm {
 
-	private static final double INITIAL_WEIGHT = 0.9;
-	private static final double FINAL_WEIGHT = 0.4;
+    public static final String C2 = "C2";
+    public static final String C1 = "C1";
+    public static final String SWARM_SIZE = "Swarm size";
 
-	private int dimensions;
-	private double c1;
-	private double c2;
-	private int swarmSize;
-	private double[] gBest;
+    private static final double INITIAL_WEIGHT = 0.9;
+    private static final double FINAL_WEIGHT = 0.4;
 
-	// Current inertia factor
-	private double inertialWeight;
-	private int maxIterations;
+    private int dimensions;
+    private double c1;
+    private double c2;
+    private int swarmSize;
+    private double[] gBest;
 
-	private PSOParticle[] particles;
+    // Current inertia factor
+    private double inertialWeight;
+    private Integer maxIterations;
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public void init() {
-		this.particles = new PSOParticle[swarmSize];
-		this.dimensions = getProblem().getDimensionsNumber();
-		// TODO Melhorar esta parte do codigo. Nao usar hard code "get(0)"
-		this.maxIterations = (Integer) getStopConditions().get(0).getParameterByName(
-				MaximumIterationsStopCondition.MAX_ITERATIONS);
+    private PSOParticle[] particles;
+    private Map<String, Class<?>> parametersMap;
 
-		double[] position;
-		for (int i = 0; i < swarmSize; i++) {
-			position = getInitialPosition();
+    /**
+     * Default constructor.
+     */
+    public PSO() {
+        initParametersMap();
+    }
 
-			PSOParticle particle = new PSOParticle(dimensions);
-			particle.updateCurrentPosition(position, getProblem().getFitness(position));
-			particle.updateBestPosition(position.clone(), particle.getCurrentFitness());
-			particle.setVelocity(getInitialVelocity());
+    private void initParametersMap() {
+        this.parametersMap = new HashMap<String, Class<?>>();
+        parametersMap.put(SWARM_SIZE, Integer.class);
+        parametersMap.put(C1, Double.class);
+        parametersMap.put(C2, Double.class);
+    }
 
-			particles[i] = particle;
-		}
-		setParticles(particles);
+    /**
+     * {@inheritDoc}
+     */
+    public void init() {
+        this.particles = new PSOParticle[swarmSize];
+        this.dimensions = getProblem().getDimensionsNumber();
 
-		// Define the gBest particle of the first iteration
-		this.gBest = particles[0].getCurrentPosition().clone();
-		for (PSOParticle particle : particles) {
-			calculateGBest(particle);
-		}
-	}
+        inertialWeight = INITIAL_WEIGHT;
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public void iterate() {
+        // TODO Melhorar esta parte do codigo. Nao usar hard code "get(0)"
+        this.maxIterations = (Integer) getStopConditions().get(0).getParameterByName(
+                MaximumIterationsStopCondition.MAXIMUM_ITERATIONS);
 
-		// Calculating the pbest and gbest positions
-		for (PSOParticle particle : particles) {
-			particle.updatePBest(getProblem());
+        double[] position;
+        for (int i = 0; i < swarmSize; i++) {
+            position = getInitialPosition();
 
-			// stores the better particle's position.
-			calculateGBest(particle);
-		}
+            PSOParticle particle = new PSOParticle(dimensions);
+            particle.updateCurrentPosition(position, getProblem().getFitness(position));
+            particle.updateBestPosition(position.clone(), particle.getCurrentFitness());
+            particle.setVelocity(getInitialVelocity());
 
-		// Updating the velocity and position for all particles
-		for (int i = 0; i < swarmSize; i++) {
-			PSOParticle particle = particles[i];
+            particles[i] = particle;
+        }
+        setParticles(particles);
 
-			updateParticleVelocity(particle, i);
-			particle.updateCurrentPosition(getProblem());
-		}
+        // Define the gBest particle of the first iteration
+        this.gBest = particles[0].getCurrentPosition().clone();
+        for (PSOParticle particle : particles) {
+            calculateGBest(particle);
+        }
+    }
 
-		// Updating the inertial weight with linear decaiment
-		inertialWeight = (inertialWeight - FINAL_WEIGHT)
-				* ((maxIterations - getIterations()) / (double) maxIterations) + FINAL_WEIGHT;
+    /**
+     * {@inheritDoc}
+     */
+    public void iterate() {
 
-		// System.out.println("Current best position ["+ iteration +"/"+
-		// maxIterations +"]: " +
-		// problem.getFitness(this.gBest));
-	}
+        // Calculating the pbest and gbest positions
+        for (PSOParticle particle : particles) {
+            particle.updatePBest(getProblem());
 
-	/**
-	 * Updates the velocity of this particle.
-	 * 
-	 * @param currentParticle The particle that we want to update the velocity.
-	 * @param index The index position of the particle in the swarm.
-	 */
-	protected void updateParticleVelocity(PSOParticle currentParticle, int index) {
-		PSOParticle bestParticleNeighborhood;
+            // Stores the better particle's position.
+            calculateGBest(particle);
+        }
 
-		bestParticleNeighborhood = getBestParticleNeighborhood(index);
-		currentParticle.updateVelocity(inertialWeight, bestParticleNeighborhood.getBestPosition(),
-				c1, c2);
-	}
+        // Updating the velocity and position for all particles
+        for (int i = 0; i < swarmSize; i++) {
+            PSOParticle particle = particles[i];
 
-	/**
-	 * Updates the global best particle based on the particle informed.<br>
-	 * If the particle informed has a better position them the actual global
-	 * best particle, it becomes the new global best particle.
-	 * 
-	 * @param particle The particle that will have the best position evaluated.
-	 */
-	protected void calculateGBest(PSOParticle particle) {
-		double[] pBest = particle.getBestPosition();
+            updateParticleVelocity(particle, i);
+            particle.updateCurrentPosition(getProblem());
+        }
 
-		double pBestFitness = getProblem().getFitness(pBest);
-		double gBestFitness = getProblem().getFitness(this.gBest);
+        // Updating the inertial weight with linear decaiment
 
-		if (getProblem().compareFitness(gBestFitness, pBestFitness)) {
-			this.gBest = pBest.clone();
-		}
-	}
+        inertialWeight = (inertialWeight - FINAL_WEIGHT) * ((maxIterations - getIterations()) / (double) maxIterations)
+                + FINAL_WEIGHT;
 
-	private double[] getInitialPosition() {
-		double[] position = new double[this.dimensions];
-		Random random = new Random(System.nanoTime());
+        // System.out.println("Current best position ["+ iteration +"/"+
+        // maxIterations +"]: " +
+        // problem.getFitness(this.gBest));
+    }
 
-		for (int i = 0; i < this.dimensions; i++) {
-			double value = random.nextDouble();
+    /**
+     * Updates the velocity of this particle.
+     * 
+     * @param currentParticle The particle that we want to update the velocity.
+     * @param index The index position of the particle in the swarm.
+     */
+    protected void updateParticleVelocity(PSOParticle currentParticle, int index) {
+        PSOParticle bestParticleNeighborhood;
 
-			position[i] = (getProblem().getUpperLimit(i) - getProblem().getLowerLimit(i)) * value
-					+ getProblem().getLowerLimit(i);
+        bestParticleNeighborhood = getBestParticleNeighborhood(index);
+        currentParticle.updateVelocity(inertialWeight, bestParticleNeighborhood.getBestPosition(), c1, c2);
+    }
 
-			position[i] = (position[i] <= getProblem().getUpperLimit(i)) ? position[i]
-					: getProblem().getUpperLimit(i);
-			position[i] = (position[i] >= getProblem().getLowerLimit(i)) ? position[i]
-					: getProblem().getLowerLimit(i);
-		}
+    /**
+     * Updates the global best particle based on the particle informed.<br>
+     * If the particle informed has a better position them the actual global
+     * best particle, it becomes the new global best particle.
+     * 
+     * @param particle The particle that will have the best position evaluated.
+     */
+    protected void calculateGBest(PSOParticle particle) {
+        double[] pBest = particle.getBestPosition();
 
-		return position;
-	}
+        double pBestFitness = getProblem().getFitness(pBest);
+        double gBestFitness = getProblem().getFitness(this.gBest);
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public double[] getBestSolution() {
-		return gBest;
-	}
+        if (getProblem().compareFitness(gBestFitness, pBestFitness)) {
+            this.gBest = pBest.clone();
+        }
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public double getBestSolutionValue() {
-		return getProblem().getFitness(gBest);
-	}
+    private double[] getInitialPosition() {
+        double[] position = new double[this.dimensions];
+        Random random = new Random(System.nanoTime());
 
-	/**
-	 * Returns the size of the swarm.
-	 * 
-	 * @return The size of the swarm.
-	 */
-	public int getSwarmSize() {
-		return swarmSize;
-	}
+        for (int i = 0; i < this.dimensions; i++) {
+            double value = random.nextDouble();
 
-	/**
-	 * Sets the size of the swarm.
-	 * 
-	 * @param swarmSize the size of the swarm.
-	 */
-	public void setSwarmSize(int swarmSize) {
-		this.swarmSize = swarmSize;
-	}
+            position[i] = (getProblem().getUpperBound(i) - getProblem().getLowerBound(i)) * value
+                    + getProblem().getLowerBound(i);
 
-	/**
-	 * Sets the maximum quantity of iterations of the algorithm.
-	 * 
-	 * @param maxIterations the maximum quantity of iterations of the algorithm.
-	 */
-	public void setMaxIterations(int maxIterations) {
-		this.maxIterations = maxIterations;
-	}
+            position[i] = (position[i] <= getProblem().getUpperBound(i)) ? position[i] : getProblem().getUpperBound(i);
+            position[i] = (position[i] >= getProblem().getLowerBound(i)) ? position[i] : getProblem().getLowerBound(i);
+        }
 
-	/**
-	 * Returns the cognitive component.
-	 * 
-	 * @return The cognitive component.
-	 */
-	public double getC1() {
-		return c1;
-	}
+        return position;
+    }
 
-	/**
-	 * Sets the cognitive component.
-	 * 
-	 * @param c1 The cognitive component.
-	 */
-	public void setC1(double c1) {
-		this.c1 = c1;
-	}
+    private double[] getInitialVelocity() {
+        double[] velocity = new double[this.dimensions];
+        Random random = new Random(System.nanoTime());
 
-	/**
-	 * Returns the social component.
-	 * 
-	 * @return The social component.
-	 */
-	public double getC2() {
-		return c2;
-	}
+        for (int i = 0; i < this.dimensions; i++) {
 
-	/**
-	 * Sets the social component.
-	 * 
-	 * @param c2 The social component.
-	 */
-	public void setC2(double c2) {
-		this.c2 = c2;
-	}
+            // The initial velocity ought be a value between zero and one
+            velocity[i] = random.nextDouble();
+        }
 
-	/**
-	 * Returns The Global Best.
-	 * 
-	 * @return The Global Best.
-	 */
-	public double[] getgBest() {
-		return gBest;
-	}
+        return velocity;
+    }
 
-	private double[] getInitialVelocity() {
-		double[] velocity = new double[this.dimensions];
-		Random random = new Random(System.nanoTime());
+    /**
+     * {@inheritDoc}
+     */
+    public double[] getBestSolution() {
+        return gBest;
+    }
 
-		for (int i = 0; i < this.dimensions; i++) {
+    /**
+     * {@inheritDoc}
+     */
+    public double getBestSolutionValue() {
+        return getProblem().getFitness(gBest);
+    }
 
-			// The initial velocity ought be a value between zero and one
-			velocity[i] = random.nextDouble();
-		}
+    /**
+     * Returns the size of the swarm.
+     * 
+     * @return The size of the swarm.
+     */
+    public int getSwarmSize() {
+        return swarmSize;
+    }
 
-		return velocity;
-	}
+    /**
+     * Sets the size of the swarm.
+     * 
+     * @param swarmSize the size of the swarm.
+     */
+    public void setSwarmSize(int swarmSize) {
+        this.swarmSize = swarmSize;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public Map<String, Class<?>> getParametersMap() {
-		return new HashMap<String, Class<?>>();
-	}
+    /**
+     * Sets the maximum quantity of iterations of the algorithm.
+     * 
+     * @param maxIterations the maximum quantity of iterations of the algorithm.
+     */
+    public void setMaxIterations(int maxIterations) {
+        this.maxIterations = maxIterations;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public void setParameterByName(String name, Object value) {
+    /**
+     * Returns the cognitive component.
+     * 
+     * @return The cognitive component.
+     */
+    public double getC1() {
+        return c1;
+    }
 
-	}
+    /**
+     * Sets the cognitive component.
+     * 
+     * @param c1 The cognitive component.
+     */
+    public void setC1(double c1) {
+        this.c1 = c1;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public Object getParameterByName(String name) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    /**
+     * Returns the social component.
+     * 
+     * @return The social component.
+     */
+    public double getC2() {
+        return c2;
+    }
 
-	/**
-	 * Returns the best particle of the neighborhood. The neighborhood is
-	 * calculated based on the index of the swarm informed and depends on the
-	 * algorithm topology.
-	 * 
-	 * @param index The index of the swarm.
-	 * @return The best particle of the neighborhood.
-	 */
-	protected abstract PSOParticle getBestParticleNeighborhood(int index);
+    /**
+     * Sets the social component.
+     * 
+     * @param c2 The social component.
+     */
+    public void setC2(double c2) {
+        this.c2 = c2;
+    }
 
+    /**
+     * Returns The Global Best.
+     * 
+     * @return The Global Best.
+     */
+    public double[] getgBest() {
+        return gBest;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Map<String, Class<?>> getParametersMap() {
+        return parametersMap;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setParameterByName(String name, Object value) {
+        if (name.equals(SWARM_SIZE)) {
+            setSwarmSize((Integer) value);
+        } else if (name.equals(C1)) {
+            setC1((Double) value);
+        } else if (name.equals(C2)) {
+            setC2((Double) value);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Object getParameterByName(String name) {
+        Object value = null;
+        if (name.equals(SWARM_SIZE)) {
+            value = swarmSize;
+        } else if (name.equals(C1)) {
+            value = c1;
+        } else if (name.equals(C2)) {
+            value = c2;
+        }
+        return value;
+    }
+
+    /**
+     * Returns the best particle of the neighborhood. The neighborhood is
+     * calculated based on the index of the swarm informed and depends on the
+     * algorithm topology.
+     * 
+     * @param index The index of the swarm.
+     * @return The best particle of the neighborhood.
+     */
+    protected abstract PSOParticle getBestParticleNeighborhood(int index);
 }

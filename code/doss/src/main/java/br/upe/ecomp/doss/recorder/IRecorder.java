@@ -52,6 +52,8 @@ public interface IRecorder {
 
     /**
      * Ends the record.
+     * 
+     * @param algorithm The algorithm for which this record is applied.
      */
-    void finalise();
+    void finalise(Algorithm algorithm);
 }
