@@ -23,6 +23,8 @@ package br.upe.ecomp.doss.view;
 
 import java.awt.Color;
 import java.awt.Image;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.JFrame;
 
@@ -33,35 +35,41 @@ import ChartDirector.ContourLayer;
 import ChartDirector.XYChart;
 import br.upe.ecomp.doss.algorithm.Algorithm;
 import br.upe.ecomp.doss.problem.Problem;
-import br.upe.ecomp.doss.recorder.ChartRecorder;
+import br.upe.ecomp.doss.recorder.FileChartRecorder;
 
 /**
- * .
+ * Runs the algorithm and shows its execution at real time.
  * 
  * @author Rodrigo Castro
  * @author George Moraes
  */
 public class ChartRunner implements Runnable {
 
-    private ChartRecorder swarmObserver;
+    private FileChartRecorder recorder;
     private ChartViewer viewer;
     private boolean running;
     private JFrame frame;
     private double[] dataX;
     private double[] dataY;
     private Problem problem;
+    private Algorithm algorithm;
 
-    // Name of the chart
+    /**
+     * The name of the chart.
+     * 
+     * @return The name of the chart.
+     */
     public String toString() {
-        return "PSO";
+        return algorithm.getName();
     }
 
-    // Number of charts produced
-    public int getNoOfCharts() {
-        return 1;
-    }
-
-    public Image createChartImage(ChartRecorder swarmObserver) {
+    /**
+     * Creates the chart image.
+     * 
+     * @param recorder An instance of {@link FileChartRecorder}
+     * @return The chart image.
+     */
+    public Image createChartImage(FileChartRecorder recorder) {
 
         double[] dataZ = new double[(dataX.length) * (dataY.length)];
         for (int yIndex = 0; yIndex < dataY.length; ++yIndex) {
@@ -97,7 +105,7 @@ public class ChartRunner implements Runnable {
         c.yAxis().setTickDensity(40);
         c.xAxis().setTickDensity(40);
 
-        c.addScatterLayer(swarmObserver.getXAxis(), swarmObserver.getYAxis(), "", Chart.Cross2Shape(0.2), 7, 0x000000);
+        c.addScatterLayer(recorder.getXAxis(), recorder.getYAxis(), "", Chart.Cross2Shape(0.2), 7, 0x000000);
 
         // Add a contour layer using the given data
         ContourLayer layer = c.addContourLayer(dataX, dataY, dataZ);
@@ -127,98 +135,75 @@ public class ChartRunner implements Runnable {
         return c.makeImage();
     }
 
-    // Main code for creating charts
-    public void createChart(ChartViewer viewer, ChartRecorder swarmObserver) {
+    /**
+     * Creates the chart images.
+     * 
+     * @param viewer An instance of {@link ChartViewer}
+     * @param recorder An instance of {@link FileChartRecorder}
+     */
+    public void createChart(ChartViewer viewer, FileChartRecorder recorder) {
 
         // Output the chart
-        Image image = createChartImage(swarmObserver);
+        Image image = createChartImage(recorder);
         viewer.setImage(image);
     }
 
     @Override
     public void run() {
         while (running) {
-            createChart(viewer, swarmObserver);
+            createChart(viewer, recorder);
             frame.repaint();
 
             try {
                 Thread.sleep(250);
-            } catch (InterruptedException e) {
+            } catch (InterruptedException cause) {
+                // Log!
+                cause.printStackTrace();
             }
         }
     }
 
-    public ChartRecorder getSwarmObserver() {
-        return swarmObserver;
-    }
-
-    public void setSwarmObserver(ChartRecorder swarmObserver) {
-        this.swarmObserver = swarmObserver;
-    }
-
-    public ChartViewer getViewer() {
-        return viewer;
-    }
-
-    public void setViewer(ChartViewer viewer) {
-        this.viewer = viewer;
-    }
-
-    public boolean isRunning() {
-        return running;
-    }
-
-    public void setRunning(boolean running) {
-        this.running = running;
-    }
-
-    public JFrame getFrame() {
-        return frame;
-    }
-
-    public void setFrame(JFrame frame) {
-        this.frame = frame;
-    }
-
+    /**
+     * Runs the algorithm and shows its execution at real time.
+     * 
+     * @param algorithm The instance of {@link Algorithm} that will be executed.
+     */
     public void runChart(Algorithm algorithm) {
-        ChartRunner chart;
+        this.algorithm = algorithm;
+        this.recorder = (FileChartRecorder) algorithm.getRecorder();
+        this.problem = algorithm.getProblem();
 
         // Create and set up the main window
-        frame = new JFrame("PSO");
+        frame = new JFrame(algorithm.getName());
         frame.getContentPane().setBackground(Color.white);
-        // frame.addWindowListener(new WindowAdapter() {
-        // public void windowClosing(WindowEvent e) {
-        // System.exit(0);
-        // }
-        // });
+
+        frame.addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+                System.exit(0);
+            }
+        });
 
         // The x and y coordinates of the chart grid
         dataX = new double[31];
         dataY = new double[31];
-
         for (int i = 0; i < 31; i++) {
             dataX[i] = i;
             dataY[i] = i;
         }
 
-        this.swarmObserver = (ChartRecorder) algorithm.getRecorder();
-        this.problem = algorithm.getProblem();
-
-        // Instantiate an instance of this chart
-
-        // Create the chart and put them in the content pane
-        setViewer(new ChartViewer());
-        createChart(getViewer(), getSwarmObserver());
-        frame.getContentPane().add(getViewer());
+        // Create the chart and put it in the content pane
+        this.viewer = new ChartViewer();
+        createChart(viewer, recorder);
+        frame.getContentPane().add(viewer);
 
         // Display the window
         frame.pack();
         frame.setVisible(true);
 
         // Runs the algorithm
-        setRunning(true);
+        running = true;
         new Thread(this).start();
         algorithm.run();
-        setRunning(false);
+        running = false;
     }
 }

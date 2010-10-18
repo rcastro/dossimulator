@@ -26,7 +26,7 @@ import java.util.List;
 
 import br.upe.ecomp.doss.algorithm.Algorithm;
 import br.upe.ecomp.doss.core.parser.AlgorithmXMLParser;
-import br.upe.ecomp.doss.recorder.ChartRecorder;
+import br.upe.ecomp.doss.recorder.FileChartRecorder;
 import br.upe.ecomp.doss.recorder.FileRecorder;
 import br.upe.ecomp.doss.view.ChartRunner;
 
@@ -37,23 +37,25 @@ import br.upe.ecomp.doss.view.ChartRunner;
  */
 public class Runner implements Runnable {
 
+    private static final int SLEEP_TIME = 2000;
     private String filePath;
     private String fileName;
-    private int numberSimulations;
+    private int simulationsNumber;
     private boolean showSimulation;
     private List<RunnerListener> listeners;
 
     /**
-     * Configures the Runner algorithm.
+     * Configures this class.
      * 
-     * @param filePath The algorithm that we want to run.
-     * @param fileName .
-     * @param numberSimulations The number of simulations that will be executed.
+     * @param filePath The path of the XML file representing the algorithm.
+     * @param fileName The name of the XML file representing the algorithm.
+     * @param simulationsNumber The number of simulations that will be executed.
+     * @param showSimulation Indicates if the simulation execution will be showed at real time.
      */
-    public Runner(String filePath, String fileName, int numberSimulations, boolean showSimulation) {
+    public Runner(String filePath, String fileName, int simulationsNumber, boolean showSimulation) {
         this.filePath = filePath;
         this.fileName = fileName;
-        this.numberSimulations = numberSimulations;
+        this.simulationsNumber = simulationsNumber;
         this.showSimulation = showSimulation;
 
         this.listeners = new ArrayList<RunnerListener>();
@@ -64,24 +66,21 @@ public class Runner implements Runnable {
      */
     public void run() {
         Algorithm algorithm;
-        for (int i = 0; i < numberSimulations; i++) {
+        for (int i = 0; i < simulationsNumber; i++) {
             algorithm = AlgorithmXMLParser.read(filePath, fileName);
+            algorithm.setShowSimulation(showSimulation);
 
             if (!showSimulation) {
                 algorithm.setRecorder(new FileRecorder());
-                algorithm.setShowSimulation(false);
                 algorithm.run();
-            } else {
-                algorithm.setRecorder(new ChartRecorder());
-                algorithm.setShowSimulation(true);
-                new ChartRunner().runChart(algorithm);
-            }
-            if (!showSimulation) {
                 try {
-                    Thread.sleep(2000);
+                    Thread.sleep(SLEEP_TIME);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
+            } else {
+                algorithm.setRecorder(new FileChartRecorder());
+                new ChartRunner().runChart(algorithm);
             }
         }
 
@@ -90,6 +89,11 @@ public class Runner implements Runnable {
         }
     }
 
+    /**
+     * Adds a listener that will be advised at the end of the simulations.
+     * 
+     * @param listener An instance of {@link RunnerListener}.
+     */
     public void addLitener(RunnerListener listener) {
         listeners.add(listener);
     }
