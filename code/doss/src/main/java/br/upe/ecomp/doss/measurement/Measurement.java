@@ -66,4 +66,9 @@ public abstract class Measurement implements Configurable {
     public int hashCode() {
         return new HashCodeBuilder().append(getName()).toHashCode();
     }
+
+    @Override
+    public String toString() {
+        return getName();
+    }
 }

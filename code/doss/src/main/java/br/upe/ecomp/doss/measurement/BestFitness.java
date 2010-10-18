@@ -27,10 +27,11 @@ import java.util.Map;
 import br.upe.ecomp.doss.algorithm.Algorithm;
 
 /**
+ * Measurement that computes the best fitness.
  * 
  * @author Rodrigo Castro
  */
-public class Measurement1 extends Measurement {
+public class BestFitness extends Measurement {
 
     private Map<String, Class<?>> parametersMap;
     private Double fitness;
@@ -38,23 +39,22 @@ public class Measurement1 extends Measurement {
     /**
      * Default constructor.
      */
-    public Measurement1() {
+    public BestFitness() {
         parametersMap = new HashMap<String, Class<?>>();
-        fitness = 0D;
     }
 
     /**
      * {@inheritDoc}
      */
     public String getName() {
-        return "Measurement 1";
+        return "Best fitness";
     }
 
     /**
      * {@inheritDoc}
      */
     public String getDescription() {
-        return "Description for measurement 1";
+        return "Measurement that computes the best fitness of the algorithm.";
     }
 
     /**
@@ -68,14 +68,14 @@ public class Measurement1 extends Measurement {
      * {@inheritDoc}
      */
     public void setParameterByName(String name, Object value) {
-        // TODO Auto-generated method stub
+        // Nothing to configure
     }
 
     /**
      * {@inheritDoc}
      */
     public Object getParameterByName(String name) {
-        // TODO Auto-generated method stub
+        // Nothing to configure
         return null;
     }
 
@@ -91,10 +91,5 @@ public class Measurement1 extends Measurement {
      */
     public double getValue() {
         return fitness;
-    }
-
-    @Override
-    public String toString() {
-        return getName();
     }
 }
