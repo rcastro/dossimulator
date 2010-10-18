@@ -24,8 +24,8 @@ package br.upe.ecomp.doss.recorder;
 import br.upe.ecomp.doss.algorithm.Algorithm;
 
 /**
- * Basic class that defines a Recorder.<br>
- * <br>
+ * Basic class that defines a Recorder.<br />
+ * <br />
  * A recorder is the entity responsible for record the evolution of the algorithm execution. It will
  * be called at the end of each iteration of the algorithm. In its basic form, it can save the
  * position of each particle at the end of each iteration and the value of each measurement
