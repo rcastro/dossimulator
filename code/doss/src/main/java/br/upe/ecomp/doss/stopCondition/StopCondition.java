@@ -21,18 +21,15 @@
  */
 package br.upe.ecomp.doss.stopCondition;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
-
 import br.upe.ecomp.doss.algorithm.Algorithm;
-import br.upe.ecomp.doss.core.Configurable;
+import br.upe.ecomp.doss.core.entity.Entity;
 
 /**
  * Basic class that defines a Stop Condition.
  * 
  * @author Rodrigo Castro
  */
-public abstract class StopCondition implements Configurable {
+public abstract class StopCondition extends Entity {
 
     /**
      * Indicates if the stop conditions was reached.
@@ -42,21 +39,4 @@ public abstract class StopCondition implements Configurable {
      *         <code>false</code>.
      */
     public abstract boolean isStop(Algorithm algorithm);
-
-    @Override
-    public boolean equals(Object object) {
-        boolean equals = false;
-        if (object == this) {
-            equals = true;
-        } else if (object instanceof StopCondition) {
-            StopCondition instance = (StopCondition) object;
-            equals = new EqualsBuilder().append(getName(), instance.getName()).isEquals();
-        }
-        return equals;
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder().append(getName()).toHashCode();
-    }
 }

@@ -21,12 +21,8 @@
  */
 package br.upe.ecomp.doss.measurement;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
-
 import br.upe.ecomp.doss.algorithm.Algorithm;
-import br.upe.ecomp.doss.core.Configurable;
-import br.upe.ecomp.doss.stopCondition.StopCondition;
+import br.upe.ecomp.doss.core.entity.Entity;
 
 /**
  * Basic class the defines a Measurement.
@@ -34,7 +30,7 @@ import br.upe.ecomp.doss.stopCondition.StopCondition;
  * @author Rodrigo Castro
  * 
  */
-public abstract class Measurement implements Configurable {
+public abstract class Measurement extends Entity {
 
     /**
      * Updates this measure based on the current state of the algorithm.
@@ -49,26 +45,4 @@ public abstract class Measurement implements Configurable {
      * @return The current value of this measure.
      */
     public abstract double getValue();
-
-    @Override
-    public boolean equals(Object object) {
-        boolean equals = false;
-        if (object == this) {
-            equals = true;
-        } else if (object instanceof StopCondition) {
-            StopCondition instance = (StopCondition) object;
-            equals = new EqualsBuilder().append(getName(), instance.getName()).isEquals();
-        }
-        return equals;
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder().append(getName()).toHashCode();
-    }
-
-    @Override
-    public String toString() {
-        return getName();
-    }
 }

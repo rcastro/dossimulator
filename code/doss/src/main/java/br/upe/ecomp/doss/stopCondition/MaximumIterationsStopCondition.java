@@ -21,10 +21,8 @@
  */
 package br.upe.ecomp.doss.stopCondition;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import br.upe.ecomp.doss.algorithm.Algorithm;
+import br.upe.ecomp.doss.core.annotation.Parameter;
 
 /**
  * Stops the execution of the algorithm after a predefined number of iterations.
@@ -33,16 +31,20 @@ import br.upe.ecomp.doss.algorithm.Algorithm;
  */
 public class MaximumIterationsStopCondition extends StopCondition {
 
-    public static final String MAXIMUM_ITERATIONS = "Maximum iterations";
-
-    private Map<String, Class<?>> parametersMap;
+    @Parameter(name = "Maximum iterations")
     private int maximumIterations;
 
     /**
      * Creates a new instance of this class.
      */
     public MaximumIterationsStopCondition() {
-        initParametersMap();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isStop(Algorithm algorithm) {
+        return algorithm.getIterations() > maximumIterations;
     }
 
     /**
@@ -60,10 +62,12 @@ public class MaximumIterationsStopCondition extends StopCondition {
     }
 
     /**
-     * {@inheritDoc}
+     * Returns the maximum number of iterations of the algorithm.
+     * 
+     * @return The maximum number of iterations of the algorithm.
      */
-    public boolean isStop(Algorithm algorithm) {
-        return algorithm.getIterations() > maximumIterations;
+    public int getMaximumIterations() {
+        return maximumIterations;
     }
 
     /**
@@ -74,42 +78,5 @@ public class MaximumIterationsStopCondition extends StopCondition {
      */
     public void setMaximumIterations(int maximumIterations) {
         this.maximumIterations = maximumIterations;
-    }
-
-    private void initParametersMap() {
-        parametersMap = new HashMap<String, Class<?>>();
-        parametersMap.put(MAXIMUM_ITERATIONS, Integer.class);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Map<String, Class<?>> getParametersMap() {
-        return parametersMap;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void setParameterByName(String name, Object value) {
-        if (name.equals(MAXIMUM_ITERATIONS)) {
-            maximumIterations = (Integer) value;
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Object getParameterByName(String name) {
-        Object value = null;
-        if (name.equals(MAXIMUM_ITERATIONS)) {
-            value = maximumIterations;
-        }
-        return value;
-    }
-
-    @Override
-    public String toString() {
-        return getName();
     }
 }

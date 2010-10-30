@@ -22,7 +22,7 @@
 package br.upe.ecomp.doss.core.exception;
 
 /**
- * Represents a infrastructure exception.
+ * Represents an infrastructure exception.
  * 
  * @author Rodrigo Castro
  */
