@@ -21,11 +21,10 @@
  */
 package br.upe.ecomp.doss.algorithm.pso;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Random;
 
 import br.upe.ecomp.doss.algorithm.Algorithm;
+import br.upe.ecomp.doss.core.annotation.Parameter;
 import br.upe.ecomp.doss.stopCondition.MaximumIterationsStopCondition;
 
 /**
@@ -42,10 +41,16 @@ public abstract class PSO extends Algorithm {
     private static final double INITIAL_WEIGHT = 0.9;
     private static final double FINAL_WEIGHT = 0.4;
 
-    private int dimensions;
+    @Parameter(name = "C1")
     private double c1;
+
+    @Parameter(name = "C2")
     private double c2;
+
+    @Parameter(name = "Swarm size")
     private int swarmSize;
+
+    private int dimensions;
     private double[] gBest;
 
     // Current inertia factor
@@ -53,20 +58,11 @@ public abstract class PSO extends Algorithm {
     private Integer maxIterations;
 
     private PSOParticle[] particles;
-    private Map<String, Class<?>> parametersMap;
 
     /**
      * Default constructor.
      */
     public PSO() {
-        initParametersMap();
-    }
-
-    private void initParametersMap() {
-        this.parametersMap = new HashMap<String, Class<?>>();
-        parametersMap.put(SWARM_SIZE, Integer.class);
-        parametersMap.put(C1, Double.class);
-        parametersMap.put(C2, Double.class);
     }
 
     /**
@@ -79,8 +75,8 @@ public abstract class PSO extends Algorithm {
         inertialWeight = INITIAL_WEIGHT;
 
         // TODO Melhorar esta parte do codigo. Nao usar hard code "get(0)"
-        this.maxIterations = (Integer) getStopConditions().get(0).getParameterByName(
-                MaximumIterationsStopCondition.MAXIMUM_ITERATIONS);
+        this.maxIterations = (Integer) ((MaximumIterationsStopCondition) getStopConditions().get(0))
+                .getMaximumIterations();
 
         double[] position;
         for (int i = 0; i < swarmSize; i++) {
@@ -227,15 +223,6 @@ public abstract class PSO extends Algorithm {
     }
 
     /**
-     * Sets the maximum quantity of iterations of the algorithm.
-     * 
-     * @param maxIterations the maximum quantity of iterations of the algorithm.
-     */
-    public void setMaxIterations(int maxIterations) {
-        this.maxIterations = maxIterations;
-    }
-
-    /**
      * Returns the cognitive component.
      * 
      * @return The cognitive component.
@@ -278,41 +265,6 @@ public abstract class PSO extends Algorithm {
      */
     public double[] getgBest() {
         return gBest;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Map<String, Class<?>> getParametersMap() {
-        return parametersMap;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void setParameterByName(String name, Object value) {
-        if (name.equals(SWARM_SIZE)) {
-            setSwarmSize((Integer) value);
-        } else if (name.equals(C1)) {
-            setC1((Double) value);
-        } else if (name.equals(C2)) {
-            setC2((Double) value);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Object getParameterByName(String name) {
-        Object value = null;
-        if (name.equals(SWARM_SIZE)) {
-            value = swarmSize;
-        } else if (name.equals(C1)) {
-            value = c1;
-        } else if (name.equals(C2)) {
-            value = c2;
-        }
-        return value;
     }
 
     /**

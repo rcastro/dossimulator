@@ -22,12 +22,8 @@
 package br.upe.ecomp.doss.algorithm;
 
 import java.util.List;
-import java.util.Map;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
-
-import br.upe.ecomp.doss.core.Configurable;
+import br.upe.ecomp.doss.core.entity.Entity;
 import br.upe.ecomp.doss.measurement.Measurement;
 import br.upe.ecomp.doss.problem.Problem;
 import br.upe.ecomp.doss.recorder.IRecorder;
@@ -38,7 +34,7 @@ import br.upe.ecomp.doss.stopCondition.StopCondition;
  * 
  * @author Rodrigo Castro
  */
-public abstract class Algorithm implements Runnable, Configurable {
+public abstract class Algorithm extends Entity implements Runnable {
 
     private Problem problem;
     private List<StopCondition> stopConditions;
@@ -67,6 +63,7 @@ public abstract class Algorithm implements Runnable, Configurable {
                 measurement.update(this);
             }
             recorder.update(this);
+            // problem.update(this);
             iterations += 1;
             if (showSimulation) {
                 try {
@@ -77,7 +74,8 @@ public abstract class Algorithm implements Runnable, Configurable {
             }
         } while (!isStop());
 
-        // We increment iterations before the iteration actually occur
+        // We increase the iterations before they actually occur, so the last iteration counted
+        // never happened.
         iterations = iterations - 1;
         recorder.finalise(this);
     }
@@ -239,58 +237,24 @@ public abstract class Algorithm implements Runnable, Configurable {
         this.recorder = recorder;
     }
 
+    /**
+     * Indicates if the simulation will be shown in real time.
+     * 
+     * @return <code>true</code> if the simulation will be shown in real time, otherwise returns
+     *         <code>false</code>.
+     */
     public boolean isShowSimulation() {
         return showSimulation;
     }
 
+    /**
+     * Sets if the simulation will be shown in real time.
+     * 
+     * @param showSimulation <code>true</code> if the simulation will be shown in real time,
+     *            <code>false</code> otherwise.
+     * 
+     */
     public void setShowSimulation(boolean showSimulation) {
         this.showSimulation = showSimulation;
-    }
-
-    @Override
-    public String toString() {
-        return getName();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public abstract String getName();
-
-    /**
-     * {@inheritDoc}
-     */
-    public abstract String getDescription();
-
-    /**
-     * {@inheritDoc}
-     */
-    public abstract Map<String, Class<?>> getParametersMap();
-
-    /**
-     * {@inheritDoc}
-     */
-    public abstract void setParameterByName(String name, Object value);
-
-    /**
-     * {@inheritDoc}
-     */
-    public abstract Object getParameterByName(String name);
-
-    @Override
-    public boolean equals(Object object) {
-        boolean equals = false;
-        if (object == this) {
-            equals = true;
-        } else if (object instanceof Algorithm) {
-            Algorithm instance = (Algorithm) object;
-            equals = new EqualsBuilder().append(getName(), instance.getName()).isEquals();
-        }
-        return equals;
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder().append(getName()).toHashCode();
     }
 }

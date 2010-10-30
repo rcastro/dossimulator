@@ -21,17 +21,14 @@
  */
 package br.upe.ecomp.doss.problem;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
-
-import br.upe.ecomp.doss.core.Configurable;
+import br.upe.ecomp.doss.core.entity.Entity;
 
 /**
  * Problem interface.
  * 
  * @author Rodrigo Castro
  */
-public abstract class Problem implements Configurable {
+public abstract class Problem extends Entity {
 
     /**
      * Makes the initial setup setting the pre informed parameters where are
@@ -88,26 +85,4 @@ public abstract class Problem implements Configurable {
      * @return The fitness of the given solution.
      */
     public abstract double getFitness(double... solution);
-
-    @Override
-    public boolean equals(Object object) {
-        boolean equals = false;
-        if (object == this) {
-            equals = true;
-        } else if (object instanceof Problem) {
-            Problem instance = (Problem) object;
-            equals = new EqualsBuilder().append(getName(), instance.getName()).isEquals();
-        }
-        return equals;
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder().append(getName()).toHashCode();
-    }
-
-    @Override
-    public String toString() {
-        return getName();
-    }
 }

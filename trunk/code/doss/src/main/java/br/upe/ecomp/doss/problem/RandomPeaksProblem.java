@@ -21,8 +21,6 @@
  */
 package br.upe.ecomp.doss.problem;
 
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * .
@@ -31,13 +29,10 @@ import java.util.Map;
  */
 public class RandomPeaksProblem extends Problem {
 
-    private Map<String, Class<?>> parametersMap;
-
     /**
      * Default constructor.
      */
     public RandomPeaksProblem() {
-        parametersMap = new HashMap<String, Class<?>>();
     }
 
     /**
@@ -106,27 +101,5 @@ public class RandomPeaksProblem extends Problem {
                 * Math.exp(-0.5 * ((x - 21) * (x - 21) + (y - 25) * (y - 25))) + 2
                 * Math.exp(-0.5 * ((x - 25) * (x - 25) + (y - 16) * (y - 16))) + 2
                 * Math.exp(-0.5 * ((x - 5) * (x - 5) + (y - 14) * (y - 14)));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Map<String, Class<?>> getParametersMap() {
-        return parametersMap;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void setParameterByName(String name, Object value) {
-        // Do nothing.
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Object getParameterByName(String name) {
-        // Do nothing.
-        return null;
     }
 }

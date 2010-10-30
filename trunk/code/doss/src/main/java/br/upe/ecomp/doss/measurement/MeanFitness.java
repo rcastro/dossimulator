@@ -21,18 +21,14 @@
  */
 package br.upe.ecomp.doss.measurement;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import br.upe.ecomp.doss.algorithm.Algorithm;
 
 /**
  * 
- * @author Rodrigo Castro
+ * @author George Moraes
  */
 public class MeanFitness extends Measurement {
 
-    private Map<String, Class<?>> parametersMap;
     private double sumBestFitness;
     private double mean;
 
@@ -42,7 +38,6 @@ public class MeanFitness extends Measurement {
     public MeanFitness() {
         sumBestFitness = 0;
         mean = 0;
-        parametersMap = new HashMap<String, Class<?>>();
     }
 
     /**
@@ -65,28 +60,6 @@ public class MeanFitness extends Measurement {
     /**
      * {@inheritDoc}
      */
-    public Map<String, Class<?>> getParametersMap() {
-        return parametersMap;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void setParameterByName(String name, Object value) {
-        // TODO Auto-generated method stub
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Object getParameterByName(String name) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public void update(Algorithm algorithm) {
         sumBestFitness += algorithm.getBestSolutionValue();
         mean = sumBestFitness / algorithm.getIterations();
@@ -97,10 +70,5 @@ public class MeanFitness extends Measurement {
      */
     public double getValue() {
         return mean;
-    }
-
-    @Override
-    public String toString() {
-        return getName();
     }
 }

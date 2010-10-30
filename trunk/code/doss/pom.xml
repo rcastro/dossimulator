@@ -7,7 +7,6 @@
 	<groupId>br.upe.ecomp.doss</groupId>
 	<artifactId>doss</artifactId>
 	<version>0.0.1</version>
-	<packaging>jar</packaging>
 
 	<name>Dynamic Optimization Systems Simulator</name>
 	<description>A tool for simuation of dynamic optimization systems</description>

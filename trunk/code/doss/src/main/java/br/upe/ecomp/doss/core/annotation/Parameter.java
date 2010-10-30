@@ -19,17 +19,26 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
-package br.upe.ecomp.doss.core;
+package br.upe.ecomp.doss.core.annotation;
+
+import static java.lang.annotation.ElementType.FIELD;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * .
+ * Annotation to indicate a class field that needs to be configured by the one that
+ * instantiates the class.
  * 
  * @author Rodrigo Castro
  */
-public interface RunnerListener {
+@Target({ FIELD })
+@Retention(RetentionPolicy.RUNTIME)
+public @interface Parameter {
 
     /**
-     * .
+     * The name of the parameter.
      */
-    void onSimulationFinish();
+    String name();
 }

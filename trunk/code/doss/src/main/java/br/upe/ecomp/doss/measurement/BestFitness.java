@@ -21,9 +21,6 @@
  */
 package br.upe.ecomp.doss.measurement;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import br.upe.ecomp.doss.algorithm.Algorithm;
 
 /**
@@ -33,14 +30,12 @@ import br.upe.ecomp.doss.algorithm.Algorithm;
  */
 public class BestFitness extends Measurement {
 
-    private Map<String, Class<?>> parametersMap;
     private Double fitness;
 
     /**
      * Default constructor.
      */
     public BestFitness() {
-        parametersMap = new HashMap<String, Class<?>>();
     }
 
     /**
@@ -55,28 +50,6 @@ public class BestFitness extends Measurement {
      */
     public String getDescription() {
         return "Measurement that computes the best fitness of the algorithm.";
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Map<String, Class<?>> getParametersMap() {
-        return parametersMap;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void setParameterByName(String name, Object value) {
-        // Nothing to configure
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Object getParameterByName(String name) {
-        // Nothing to configure
-        return null;
     }
 
     /**

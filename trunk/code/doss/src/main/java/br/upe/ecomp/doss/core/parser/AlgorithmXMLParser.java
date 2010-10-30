@@ -28,7 +28,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -45,7 +44,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import br.upe.ecomp.doss.algorithm.Algorithm;
-import br.upe.ecomp.doss.core.Configurable;
+import br.upe.ecomp.doss.core.entity.EntityPropertyManager;
 import br.upe.ecomp.doss.core.exception.InfraException;
 import br.upe.ecomp.doss.measurement.Measurement;
 import br.upe.ecomp.doss.problem.Problem;
@@ -59,16 +58,19 @@ import br.upe.ecomp.doss.stopCondition.StopCondition;
 public final class AlgorithmXMLParser {
 
     private static final String DEFAULT_EXTENSION = ".xml";
-    private static final String MEASUREMENT = "measurement";
-    private static final String STOP_CONDITION = "stopCondition";
-    private static final String PARAM = "param";
-    private static final String MEASUREMENTS = "measurements";
+    private static final String XML_VERSION = "1.0";
+    private static final String XML_ENCODING = "UTF-8";
+
     private static final String CLASS = "class";
+    private static final String PARAM = "param";
+
+    private static final String MEASUREMENT = "measurement";
+    private static final String MEASUREMENTS = "measurements";
+    private static final String STOP_CONDITION = "stopCondition";
     private static final String STOP_CONDITIONS = "stopConditions";
     private static final String PROBLEM = "problem";
     private static final String ALGORITHM = "algorithm";
-    private static final String XML_VERSION = "1.0";
-    private static final String XML_ENCODING = "UTF-8";
+
     private static final int INDENT_SIZE = 4;
 
     private AlgorithmXMLParser() {
@@ -111,6 +113,9 @@ public final class AlgorithmXMLParser {
     public static Algorithm read(String filePath, String fileName) {
         DOMParser parser = new DOMParser();
         Document xmlDoc;
+        if (!fileName.endsWith(DEFAULT_EXTENSION)) {
+            fileName = fileName + DEFAULT_EXTENSION;
+        }
         File xmlFile = new File(filePath, fileName);
         FileReader reader = null;
         Algorithm algorithm = null;
@@ -180,37 +185,36 @@ public final class AlgorithmXMLParser {
         }
     }
 
-    private static void addSimpleElememnt(Document xmlDoc, Configurable configurable, String elementName) {
+    private static void addSimpleElememnt(Document xmlDoc, Object entity, String elementName) {
         Element item = xmlDoc.createElement(elementName);
-        item.setAttribute(CLASS, configurable.getClass().getCanonicalName());
+        item.setAttribute(CLASS, entity.getClass().getCanonicalName());
 
-        addParameters(item, xmlDoc, configurable);
+        addParameters(item, xmlDoc, entity);
 
         xmlDoc.getDocumentElement().appendChild(item);
     }
 
-    private static void addComplexElement(Document xmlDoc, List<? extends Configurable> configurableList,
-            String elementName, String elementChieldName) {
+    private static void addComplexElement(Document xmlDoc, List<? extends Object> intitiesList, String elementName,
+            String elementChieldName) {
         Element item = xmlDoc.createElement(elementName);
 
         Element itemChield;
-        for (Configurable configurable : configurableList) {
+        for (Object entitie : intitiesList) {
             itemChield = xmlDoc.createElement(elementChieldName);
-            itemChield.setAttribute(CLASS, configurable.getClass().getCanonicalName());
-            addParameters(itemChield, xmlDoc, configurable);
+            itemChield.setAttribute(CLASS, entitie.getClass().getCanonicalName());
+            addParameters(itemChield, xmlDoc, entitie);
             item.appendChild(itemChield);
         }
-
         xmlDoc.getDocumentElement().appendChild(item);
     }
 
-    private static void addParameters(Element item, Document xmlDoc, Configurable configurable) {
+    private static void addParameters(Element item, Document xmlDoc, Object entity) {
         Element itemChield;
-        for (String parameterName : configurable.getParametersMap().keySet()) {
-            if (configurable.getParameterByName(parameterName) != null) {
+        for (String fieldName : EntityPropertyManager.getFieldsName(entity)) {
+            if (EntityPropertyManager.getValue(entity, fieldName) != null) {
                 itemChield = xmlDoc.createElement(PARAM);
-                itemChield.setAttribute("name", parameterName);
-                itemChield.setAttribute("value", configurable.getParameterByName(parameterName).toString());
+                itemChield.setAttribute("name", fieldName);
+                itemChield.setAttribute("value", EntityPropertyManager.getValueAsString(entity, fieldName));
                 item.appendChild(itemChield);
             }
         }
@@ -280,8 +284,8 @@ public final class AlgorithmXMLParser {
         for (int i = 0; i < nodesLength; i++) {
             stopConditionNode = (Element) nodes.item(i);
             try {
-                Class<? extends StopCondition> clazz = (Class<? extends StopCondition>) Class
-                        .forName(stopConditionNode.getAttribute(CLASS));
+                Class<? extends StopCondition> clazz = (Class<? extends StopCondition>) Class.forName(stopConditionNode
+                        .getAttribute(CLASS));
                 stopCondition = clazz.newInstance();
 
                 if (stopConditionNode.hasChildNodes()) {
@@ -335,27 +339,14 @@ public final class AlgorithmXMLParser {
         return measurements;
     }
 
-    private static void readParameters(Element element, Configurable configurable) {
+    private static void readParameters(Element element, Object entity) {
         NodeList nodes = element.getElementsByTagName(PARAM);
         int nodesLength = nodes.getLength();
 
         Element chield;
         for (int i = 0; i < nodesLength; i++) {
             chield = (Element) nodes.item(i);
-            setParameter(configurable, chield.getAttribute("name"), chield.getAttribute("value"));
-        }
-    }
-
-    private static void setParameter(Configurable configurable, String name, String value) {
-        Map<String, Class<?>> map = configurable.getParametersMap();
-        if (map.get(name) != null) {
-            if (map.get(name).equals(Integer.class)) {
-                configurable.setParameterByName(name, Integer.parseInt(value));
-            } else if (map.get(name).equals(Double.class)) {
-                configurable.setParameterByName(name, Double.parseDouble(value));
-            } else if (map.get(name).equals(String.class)) {
-                configurable.setParameterByName(name, value);
-            }
+            EntityPropertyManager.setValue(entity, chield.getAttribute("name"), chield.getAttribute("value"));
         }
     }
 

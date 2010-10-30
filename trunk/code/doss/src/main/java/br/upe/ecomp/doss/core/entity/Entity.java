@@ -19,55 +19,53 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
-package br.upe.ecomp.doss.core;
+package br.upe.ecomp.doss.core.entity;
 
-import java.util.Map;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+
+import br.upe.ecomp.doss.algorithm.Algorithm;
 
 /**
- * Represents entities that are configurable without one knowing their parameters before runtime.
+ * Basic class that represents entities of the system.
  * 
  * @author Rodrigo Castro
  */
-public interface Configurable {
+public abstract class Entity {
 
     /**
      * Returns the name of this entity.
      * 
      * @return The name of this entity.
      */
-    String getName();
+    public abstract String getName();
 
     /**
      * Returns the description of this entity.
      * 
      * @return The description of this entity.
      */
-    String getDescription();
+    public abstract String getDescription();
 
-    /**
-     * Returns a map containing the parameters name of this entity, if any, and their class type
-     * respectively. <br>
-     * <br>
-     * For example, if we have a parameter for the name of the entity, we would have the pair:
-     * ("name", String.class).
-     * 
-     * @return The parameters name and their class type.
-     */
-    Map<String, Class<?>> getParametersMap();
+    @Override
+    public boolean equals(Object object) {
+        boolean equals = false;
+        if (object == this) {
+            equals = true;
+        } else if (object instanceof Algorithm) {
+            Algorithm instance = (Algorithm) object;
+            equals = new EqualsBuilder().append(getName(), instance.getName()).isEquals();
+        }
+        return equals;
+    }
 
-    /**
-     * Sets a parameter value by its name.
-     * 
-     * @param name The name of the parameter we want to change.
-     * @param value The value we want to set.
-     */
-    void setParameterByName(String name, Object value);
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(getName()).toHashCode();
+    }
 
-    /**
-     * Returns the value of the parameter that has the name specified.
-     * 
-     * @param name The name of the parameter.
-     * @return The value of the parameter that has the name specified.
-     */
-    Object getParameterByName(String name);
+    @Override
+    public String toString() {
+        return getName();
+    }
 }

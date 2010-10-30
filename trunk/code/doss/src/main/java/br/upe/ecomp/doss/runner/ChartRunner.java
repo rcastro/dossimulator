@@ -19,12 +19,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
-package br.upe.ecomp.doss.view;
+package br.upe.ecomp.doss.runner;
 
 import java.awt.Color;
 import java.awt.Image;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 
 import javax.swing.JFrame;
 
@@ -36,6 +34,7 @@ import ChartDirector.XYChart;
 import br.upe.ecomp.doss.algorithm.Algorithm;
 import br.upe.ecomp.doss.problem.Problem;
 import br.upe.ecomp.doss.recorder.FileChartRecorder;
+import br.upe.ecomp.doss.util.PointGenerator;
 
 /**
  * Runs the algorithm and shows its execution at real time.
@@ -49,10 +48,11 @@ public class ChartRunner implements Runnable {
     private ChartViewer viewer;
     private boolean running;
     private JFrame frame;
-    private double[] dataX;
-    private double[] dataY;
     private Problem problem;
     private Algorithm algorithm;
+    private double[] dataX;
+    private double[] dataY;
+    private double[] dataZ;
 
     /**
      * The name of the chart.
@@ -71,15 +71,7 @@ public class ChartRunner implements Runnable {
      */
     public Image createChartImage(FileChartRecorder recorder) {
 
-        double[] dataZ = new double[(dataX.length) * (dataY.length)];
-        for (int yIndex = 0; yIndex < dataY.length; ++yIndex) {
-            double y = dataY[yIndex];
-            for (int xIndex = 0; xIndex < dataX.length; ++xIndex) {
-                double x = dataX[xIndex];
-
-                dataZ[yIndex * (dataX.length) + xIndex] = problem.getFitness(new double[] { x, y });
-            }
-        }
+        createSurface();
 
         // Create a XYChart object of size 600 x 500 pixels
         XYChart c = new XYChart(600, 500);
@@ -105,6 +97,7 @@ public class ChartRunner implements Runnable {
         c.yAxis().setTickDensity(40);
         c.xAxis().setTickDensity(40);
 
+        // Plot the particles
         c.addScatterLayer(recorder.getXAxis(), recorder.getYAxis(), "", Chart.Cross2Shape(0.2), 7, 0x000000);
 
         // Add a contour layer using the given data
@@ -133,6 +126,20 @@ public class ChartRunner implements Runnable {
         // Use smooth gradient coloring
         cAxis.setColorGradient(true);
         return c.makeImage();
+    }
+
+    private void createSurface() {
+        dataX = PointGenerator.generatePoints(problem.getLowerBound(0), problem.getUpperBound(0), 0.1);
+        dataY = PointGenerator.generatePoints(problem.getLowerBound(1), problem.getUpperBound(1), 0.1);
+        dataZ = new double[(dataX.length) * (dataY.length)];
+        for (int yIndex = 0; yIndex < dataY.length; ++yIndex) {
+            double y = dataY[yIndex];
+            for (int xIndex = 0; xIndex < dataX.length; ++xIndex) {
+                double x = dataX[xIndex];
+
+                dataZ[yIndex * (dataX.length) + xIndex] = problem.getFitness(new double[] { x, y });
+            }
+        }
     }
 
     /**
@@ -176,20 +183,6 @@ public class ChartRunner implements Runnable {
         // Create and set up the main window
         frame = new JFrame(algorithm.getName());
         frame.getContentPane().setBackground(Color.white);
-
-        frame.addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent e) {
-                System.exit(0);
-            }
-        });
-
-        // The x and y coordinates of the chart grid
-        dataX = new double[31];
-        dataY = new double[31];
-        for (int i = 0; i < 31; i++) {
-            dataX[i] = i;
-            dataY[i] = i;
-        }
 
         // Create the chart and put it in the content pane
         this.viewer = new ChartViewer();

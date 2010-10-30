@@ -23,9 +23,6 @@ package br.upe.ecomp.doss.problem;
 
 import static java.lang.Math.pow;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * Problem 1 to test the implementation of the PSO algorithm.
  * 
@@ -33,7 +30,6 @@ import java.util.Map;
  */
 public class Problem1 extends Problem {
 
-    private Map<String, Class<?>> parametersMap;
     private final Integer dimensions;
 
     /**
@@ -41,19 +37,18 @@ public class Problem1 extends Problem {
      */
     public Problem1() {
         dimensions = 3;
-        parametersMap = new HashMap<String, Class<?>>();
     }
 
     /**
      * {@inheritDoc}
      */
-	public void init() {
+    public void init() {
 
-	}
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
+    /**
+     * {@inheritDoc}
+     */
     public String getName() {
         return "Problem 1";
     }
@@ -87,47 +82,20 @@ public class Problem1 extends Problem {
     }
 
     /**
-	 * This is a minimization problem. {@inheritDoc}
+     * This is a minimization problem. {@inheritDoc}
      */
     public boolean compareFitness(double pBestFitness, double currentPositionFitness) {
-		return currentPositionFitness < pBestFitness;
+        return currentPositionFitness < pBestFitness;
     }
 
     /**
      * {@inheritDoc}
      */
     public double getFitness(double... dimension) {
-		double sphere = 0.0;
-		for (int i = 0; i < dimension.length; i++) {
-			sphere += pow(dimension[i], 2);
+        double sphere = 0.0;
+        for (int i = 0; i < dimension.length; i++) {
+            sphere += pow(dimension[i], 2);
         }
-		return sphere;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Map<String, Class<?>> getParametersMap() {
-        return parametersMap;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void setParameterByName(String name, Object value) {
-        // Do nothing.
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Object getParameterByName(String name) {
-        // Do nothing.
-        return null;
-    }
-
-    @Override
-    public String toString() {
-        return getName();
+        return sphere;
     }
 }

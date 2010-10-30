@@ -19,7 +19,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
-package br.upe.ecomp.doss.core;
+package br.upe.ecomp.doss.runner;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +28,6 @@ import br.upe.ecomp.doss.algorithm.Algorithm;
 import br.upe.ecomp.doss.core.parser.AlgorithmXMLParser;
 import br.upe.ecomp.doss.recorder.FileChartRecorder;
 import br.upe.ecomp.doss.recorder.FileRecorder;
-import br.upe.ecomp.doss.view.ChartRunner;
 
 /**
  * Class responsible for run the algorithms.
