@@ -22,6 +22,7 @@
 package br.upe.ecomp.doss.problem;
 
 import static java.lang.Math.pow;
+import br.upe.ecomp.doss.algorithm.Algorithm;
 
 /**
  * Problem 1 to test the implementation of the PSO algorithm.
@@ -97,5 +98,12 @@ public class Problem1 extends Problem {
             sphere += pow(dimension[i], 2);
         }
         return sphere;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void update(Algorithm algorithm) {
+        // TODO Auto-generated method stub
     }
 }
