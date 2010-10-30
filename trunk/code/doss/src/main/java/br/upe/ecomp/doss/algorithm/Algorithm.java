@@ -56,6 +56,7 @@ public abstract class Algorithm extends Entity implements Runnable {
     public void run() {
         init();
         recorder.init(this);
+        problem.init();
         iterations = 1;
         do {
             iterate();
@@ -63,7 +64,7 @@ public abstract class Algorithm extends Entity implements Runnable {
                 measurement.update(this);
             }
             recorder.update(this);
-            // problem.update(this);
+            problem.update(this);
             iterations += 1;
             if (showSimulation) {
                 try {

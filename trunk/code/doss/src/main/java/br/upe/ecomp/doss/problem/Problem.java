@@ -21,6 +21,7 @@
  */
 package br.upe.ecomp.doss.problem;
 
+import br.upe.ecomp.doss.algorithm.Algorithm;
 import br.upe.ecomp.doss.core.entity.Entity;
 
 /**
@@ -35,13 +36,6 @@ public abstract class Problem extends Entity {
      * required and initializes what is required.
      */
     public abstract void init();
-
-    /**
-     * Returns the name of the problem.
-     * 
-     * @return The name of the problem.
-     */
-    public abstract String getName();
 
     /**
      * Returns the number of dimensions of this problem.
@@ -85,4 +79,11 @@ public abstract class Problem extends Entity {
      * @return The fitness of the given solution.
      */
     public abstract double getFitness(double... solution);
+
+    /**
+     * Changes the current state of this problem.
+     * 
+     * @param algorithm The algorithm for which this problem is applied.
+     */
+    public abstract void update(Algorithm algorithm);
 }

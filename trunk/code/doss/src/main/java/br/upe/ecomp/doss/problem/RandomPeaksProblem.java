@@ -21,6 +21,7 @@
  */
 package br.upe.ecomp.doss.problem;
 
+import br.upe.ecomp.doss.algorithm.Algorithm;
 
 /**
  * .
@@ -101,5 +102,12 @@ public class RandomPeaksProblem extends Problem {
                 * Math.exp(-0.5 * ((x - 21) * (x - 21) + (y - 25) * (y - 25))) + 2
                 * Math.exp(-0.5 * ((x - 25) * (x - 25) + (y - 16) * (y - 16))) + 2
                 * Math.exp(-0.5 * ((x - 5) * (x - 5) + (y - 14) * (y - 14)));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void update(Algorithm algorithm) {
+        // Do nothing.
     }
 }
