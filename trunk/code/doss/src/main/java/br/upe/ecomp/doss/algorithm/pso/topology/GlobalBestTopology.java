@@ -19,50 +19,35 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
-package br.upe.ecomp.doss.measurement;
+package br.upe.ecomp.doss.algorithm.pso.topology;
 
-import br.upe.ecomp.doss.algorithm.Algorithm;
+import br.upe.ecomp.doss.algorithm.pso.PSO;
+import br.upe.ecomp.doss.algorithm.pso.PSOParticle;
 
 /**
- * Measurement that computes the best fitness.
+ * .
  * 
  * @author Rodrigo Castro
  */
-public class BestFitness extends Measurement {
-
-    private double fitness;
-
-    /**
-     * Default constructor.
-     */
-    public BestFitness() {
-    }
+public class GlobalBestTopology implements ITopology {
 
     /**
      * {@inheritDoc}
      */
-    public String getName() {
-        return "Best fitness";
-    }
+    public PSOParticle getBestParticleNeighborhood(PSO pso, int index) {
+        int indexBestParticle = index;
+        double bestParticleFitness = pso.getParticles()[index].getBestFitness();
+        double currentParticleFitness;
 
-    /**
-     * {@inheritDoc}
-     */
-    public String getDescription() {
-        return "Measurement that computes the best fitness of the algorithm.";
-    }
+        for (int i = 0; i < pso.getSwarmSize(); i++) {
+            currentParticleFitness = pso.getParticles()[i].getBestFitness();
 
-    /**
-     * {@inheritDoc}
-     */
-    public void update(Algorithm algorithm) {
-        fitness = algorithm.getBestSolutionValue();
-    }
+            if (pso.getProblem().isFitnessBetterThan(bestParticleFitness, currentParticleFitness)) {
+                indexBestParticle = i;
+                bestParticleFitness = currentParticleFitness;
+            }
+        }
 
-    /**
-     * {@inheritDoc}
-     */
-    public double getValue() {
-        return fitness;
+        return (PSOParticle) pso.getParticles()[indexBestParticle];
     }
 }

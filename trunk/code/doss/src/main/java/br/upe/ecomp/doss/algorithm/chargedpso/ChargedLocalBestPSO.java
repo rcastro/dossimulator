@@ -19,30 +19,32 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
-package br.upe.ecomp.doss.algorithm.pso;
+package br.upe.ecomp.doss.algorithm.chargedpso;
 
-import br.upe.ecomp.doss.algorithm.pso.topology.GlobalBestTopology;
+import br.upe.ecomp.doss.algorithm.pso.topology.LocalBestTopology;
 
-public class GlobalBestPSO extends PSO {
+/**
+ * .
+ * 
+ * @author Rodrigo Castro
+ */
+public class ChargedLocalBestPSO extends ChargedPSO {
+
     /**
      * Creates a new instance of this class.
      */
-    public GlobalBestPSO() {
+    public ChargedLocalBestPSO() {
         super();
-        setTopology(new GlobalBestTopology());
+        setTopology(new LocalBestTopology());
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public String getName() {
-        return "Global Best PSO";
+        return "Charged Local Best PSO";
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public String getDescription() {
-        return "An implementation of the global best PSO algorithm.";
+        return "An implementation of the Charged PSO algorithm.";
     }
 }

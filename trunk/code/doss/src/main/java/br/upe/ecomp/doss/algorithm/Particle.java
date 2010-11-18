@@ -22,9 +22,13 @@
 package br.upe.ecomp.doss.algorithm;
 
 /**
- * Basic class that defines a Particle. This class should be extended for more specialized
- * algorithms. <br>
- * For example, for the PSO algorithm, we would want our particle to have a velocity property.
+ * <p>
+ * Basic class that defines a Particle.
+ * </p>
+ * <p>
+ * This class should be extended in order to be used by some algorithms. For example, for the PSO
+ * algorithm, one would want to extend the <code>Particle</code> to add a velocity property.
+ * </p>
  * 
  * @author Rodrigo Castro
  */

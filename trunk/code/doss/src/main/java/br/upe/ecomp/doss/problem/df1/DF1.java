@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import br.upe.ecomp.doss.algorithm.Algorithm;
+import br.upe.ecomp.doss.core.annotation.Parameter;
 import br.upe.ecomp.doss.problem.Problem;
 
 public class DF1 extends Problem {
@@ -32,24 +33,13 @@ public class DF1 extends Problem {
     private static final String DIMENSIONS = "dimensions";
 
     private List<Peak> peakList;
-
-    private int numPeaks;
     private DFParameters dfParameters;
-    private int dimensions;
-    private double aH;
-    private double aR;
-    private double aX;
-    private int xLimit;
-    private double xScale;
-    private int hBase;
-    private int hRange;
-    private double hScale;
-    private int rBase;
-    private int rRange;
-    private double rScale;
-    private boolean dynamicH;
-    private boolean dynamicR;
-    private boolean dynamicX;
+
+    @Parameter(name = "Number of peaks")
+    private int numPeaks;
+
+    @Parameter(name = "Change step")
+    private int changeStep;
 
     /**
      * Default constructor.
@@ -57,17 +47,13 @@ public class DF1 extends Problem {
     public DF1() {
     }
 
-    public DF1(int numPeaks) {
-        this.numPeaks = numPeaks;
-        this.peakList = new ArrayList<Peak>(numPeaks);
-        this.dfParameters = new DFParameters();
-    }
-
     /**
      * {@inheritDoc} This method needs to be called just after all required
      * parameters were configured.
      */
     public void init() {
+        this.peakList = new ArrayList<Peak>(numPeaks);
+        this.dfParameters = new DFParameters();
         createFunctions(dfParameters);
     }
 
@@ -85,7 +71,7 @@ public class DF1 extends Problem {
      * {@inheritDoc}
      */
     public String getDescription() {
-        return "DF1. A dynamic benchmark problem to test the PSO algorithm.";
+        return "DF1. A dynamic benchmark problem.";
     }
 
     /**
@@ -105,21 +91,21 @@ public class DF1 extends Problem {
     /**
      * {@inheritDoc}
      */
-    public double getLowerLimit(int dimension) {
+    public double getLowerBound(int dimension) {
         return dfParameters.getXBase();
     }
 
     /**
      * {@inheritDoc}
      */
-    public double getUpperLimit(int dimension) {
+    public double getUpperBound(int dimension) {
         return dfParameters.getXBase() + dfParameters.getXRange();
     }
 
     /**
      * This is a maximization problem. {@inheritDoc}
      */
-    public boolean compareFitness(double bestSolutionFitness, double currentSolutionFitness) {
+    public boolean isFitnessBetterThan(double bestSolutionFitness, double currentSolutionFitness) {
         return currentSolutionFitness > bestSolutionFitness;
     }
 
@@ -134,6 +120,15 @@ public class DF1 extends Problem {
         return Collections.max(funcValues);
     }
 
+    @Override
+    public void update(Algorithm algorithm) {
+        if (algorithm.getIterations() > 0 && algorithm.getIterations() % changeStep == 0) {
+            for (Peak peak : peakList) {
+                peak.changePeak(algorithm.getIterations());
+            }
+        }
+    }
+
     public int getNumPeaks() {
         return numPeaks;
     }
@@ -142,23 +137,7 @@ public class DF1 extends Problem {
         this.numPeaks = numPeaks;
     }
 
-    @Override
-    public double getLowerBound(int dimension) {
-        // TODO Auto-generated method stub
-        return 0;
+    public void setChangeStep(int changeStep) {
+        this.changeStep = changeStep;
     }
-
-    @Override
-    public double getUpperBound(int dimension) {
-        // TODO Auto-generated method stub
-        return 0;
-    }
-
-    @Override
-    public void update(Algorithm algorithm) {
-        for (Peak peak : peakList) {
-            peak.changePeak(algorithm.getIterations());
-        }
-    }
-
 }

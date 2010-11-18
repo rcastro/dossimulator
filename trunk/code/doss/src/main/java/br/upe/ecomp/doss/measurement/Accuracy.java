@@ -19,30 +19,37 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
-package br.upe.ecomp.doss.algorithm.pso;
+package br.upe.ecomp.doss.measurement;
 
-import br.upe.ecomp.doss.algorithm.pso.topology.GlobalBestTopology;
+import br.upe.ecomp.doss.algorithm.Algorithm;
 
-public class GlobalBestPSO extends PSO {
-    /**
-     * Creates a new instance of this class.
-     */
-    public GlobalBestPSO() {
-        super();
-        setTopology(new GlobalBestTopology());
-    }
+/**
+ * .
+ * 
+ * @author Rodrigo Castro
+ */
+public class Accuracy extends Measurement {
 
-    /**
-     * {@inheritDoc}
-     */
+    private double meanAccuracy;
+
+    @Override
     public String getName() {
-        return "Global Best PSO";
+        return "Accuracy";
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public String getDescription() {
-        return "An implementation of the global best PSO algorithm.";
+        return null;
+    }
+
+    @Override
+    public void update(Algorithm algorithm) {
+
+    }
+
+    @Override
+    public double getValue() {
+        // TODO Auto-generated method stub
+        return 0;
     }
 }
