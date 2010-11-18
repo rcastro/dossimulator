@@ -70,7 +70,7 @@ public abstract class Problem extends Entity {
      * @return <code>true</code> if currentSolutionFitness has a better fitness than
      *         bestSolutionFitness, otherwise it returns <code>false</code>.
      */
-    public abstract boolean compareFitness(double bestSolutionFitness, double currentSolutionFitness);
+    public abstract boolean isFitnessBetterThan(double bestSolutionFitness, double currentSolutionFitness);
 
     /**
      * Calculates the fitness of the given solution.

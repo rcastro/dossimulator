@@ -19,30 +19,27 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
-package br.upe.ecomp.doss.algorithm.pso;
+package br.upe.ecomp.doss.algorithm.pso.topology;
 
-import br.upe.ecomp.doss.algorithm.pso.topology.GlobalBestTopology;
+import br.upe.ecomp.doss.algorithm.pso.PSO;
+import br.upe.ecomp.doss.algorithm.pso.PSOParticle;
 
-public class GlobalBestPSO extends PSO {
-    /**
-     * Creates a new instance of this class.
-     */
-    public GlobalBestPSO() {
-        super();
-        setTopology(new GlobalBestTopology());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public String getName() {
-        return "Global Best PSO";
-    }
+/**
+ * .
+ * 
+ * @author Rodrigo Castro
+ * 
+ */
+public interface ITopology {
 
     /**
-     * {@inheritDoc}
+     * Returns the best particle of the neighborhood. The neighborhood is
+     * calculated based on the index of the swarm informed and depends on the
+     * algorithm topology.
+     * 
+     * @param pso .
+     * @param index The index of the swarm.
+     * @return The best particle of the neighborhood.
      */
-    public String getDescription() {
-        return "An implementation of the global best PSO algorithm.";
-    }
+    PSOParticle getBestParticleNeighborhood(PSO pso, int index);
 }

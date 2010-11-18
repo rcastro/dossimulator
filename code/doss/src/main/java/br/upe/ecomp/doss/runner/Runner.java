@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.upe.ecomp.doss.algorithm.Algorithm;
+import br.upe.ecomp.doss.core.exception.InfraException;
 import br.upe.ecomp.doss.core.parser.AlgorithmXMLParser;
 import br.upe.ecomp.doss.recorder.FileChartRecorder;
 import br.upe.ecomp.doss.recorder.FileRecorder;
@@ -37,11 +38,30 @@ import br.upe.ecomp.doss.recorder.FileRecorder;
 public class Runner implements Runnable {
 
     private static final int SLEEP_TIME = 2000;
+
     private String filePath;
     private String fileName;
     private int simulationsNumber;
     private boolean showSimulation;
+    private Algorithm algorithm;
     private List<RunnerListener> listeners;
+
+    private Runner(int simulationsNumber, boolean showSimulation) {
+        this.listeners = new ArrayList<RunnerListener>();
+        this.simulationsNumber = simulationsNumber;
+        this.showSimulation = showSimulation;
+    }
+
+    /**
+     * Configures this class.
+     * 
+     * @param algorithm The {@link Algorithm} instance that will be executed.
+     * @param showSimulation Indicates if the simulation execution will be showed at real time.
+     */
+    public Runner(Algorithm algorithm, boolean showSimulation) {
+        this(1, showSimulation);
+        this.algorithm = algorithm;
+    }
 
     /**
      * Configures this class.
@@ -52,22 +72,28 @@ public class Runner implements Runnable {
      * @param showSimulation Indicates if the simulation execution will be showed at real time.
      */
     public Runner(String filePath, String fileName, int simulationsNumber, boolean showSimulation) {
+        this(simulationsNumber, showSimulation);
+
         this.filePath = filePath;
         this.fileName = fileName;
-        this.simulationsNumber = simulationsNumber;
-        this.showSimulation = showSimulation;
-
-        this.listeners = new ArrayList<RunnerListener>();
     }
 
     /**
      * {@inheritDoc}
      */
     public void run() {
-        Algorithm algorithm;
         for (int i = 0; i < simulationsNumber; i++) {
-            algorithm = AlgorithmXMLParser.read(filePath, fileName);
+            if (filePath != null && fileName != null) {
+                algorithm = AlgorithmXMLParser.read(filePath, fileName);
+            } else if (algorithm == null) {
+                throw new InfraException(
+                        "You have to inform either the Algorithm or the xml file of the test scenario.");
+            }
             algorithm.setShowSimulation(showSimulation);
+
+            // Initializes the problem here because other entities may rely on him to be initialized
+            // correctly.
+            algorithm.getProblem().init();
 
             if (!showSimulation) {
                 algorithm.setRecorder(new FileRecorder());

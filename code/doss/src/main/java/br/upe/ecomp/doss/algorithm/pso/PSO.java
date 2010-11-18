@@ -24,8 +24,9 @@ package br.upe.ecomp.doss.algorithm.pso;
 import java.util.Random;
 
 import br.upe.ecomp.doss.algorithm.Algorithm;
+import br.upe.ecomp.doss.algorithm.Particle;
+import br.upe.ecomp.doss.algorithm.pso.topology.ITopology;
 import br.upe.ecomp.doss.core.annotation.Parameter;
-import br.upe.ecomp.doss.stopCondition.MaximumIterationsStopCondition;
 
 /**
  * An implementation of the PSO algorithm.
@@ -38,9 +39,6 @@ public abstract class PSO extends Algorithm {
     public static final String C1 = "C1";
     public static final String SWARM_SIZE = "Swarm size";
 
-    private static final double INITIAL_WEIGHT = 0.9;
-    private static final double FINAL_WEIGHT = 0.4;
-
     @Parameter(name = "C1")
     private double c1;
 
@@ -50,14 +48,15 @@ public abstract class PSO extends Algorithm {
     @Parameter(name = "Swarm size")
     private int swarmSize;
 
+    @Parameter(name = "Inertial weight")
+    private double inertialWeight;
+
     private int dimensions;
     private double[] gBest;
 
-    // Current inertia factor
-    private double inertialWeight;
-    private Integer maxIterations;
-
     private PSOParticle[] particles;
+
+    private ITopology topology;
 
     /**
      * Default constructor.
@@ -72,12 +71,16 @@ public abstract class PSO extends Algorithm {
         this.particles = new PSOParticle[swarmSize];
         this.dimensions = getProblem().getDimensionsNumber();
 
-        inertialWeight = INITIAL_WEIGHT;
+        createParticles();
 
-        // TODO Melhorar esta parte do codigo. Nao usar hard code "get(0)"
-        this.maxIterations = (Integer) ((MaximumIterationsStopCondition) getStopConditions().get(0))
-                .getMaximumIterations();
+        // Define the gBest particle of the first iteration
+        this.gBest = particles[0].getCurrentPosition().clone();
+        for (PSOParticle particle : particles) {
+            calculateGBest(particle);
+        }
+    }
 
+    protected void createParticles() {
         double[] position;
         for (int i = 0; i < swarmSize; i++) {
             position = getInitialPosition();
@@ -90,12 +93,6 @@ public abstract class PSO extends Algorithm {
             particles[i] = particle;
         }
         setParticles(particles);
-
-        // Define the gBest particle of the first iteration
-        this.gBest = particles[0].getCurrentPosition().clone();
-        for (PSOParticle particle : particles) {
-            calculateGBest(particle);
-        }
     }
 
     /**
@@ -107,26 +104,17 @@ public abstract class PSO extends Algorithm {
         for (PSOParticle particle : particles) {
             particle.updatePBest(getProblem());
 
-            // Stores the better particle's position.
+            // Stores the best particle's position.
             calculateGBest(particle);
         }
 
-        // Updating the velocity and position for all particles
+        // Updating the velocity and position of all particles
         for (int i = 0; i < swarmSize; i++) {
             PSOParticle particle = particles[i];
 
             updateParticleVelocity(particle, i);
             particle.updateCurrentPosition(getProblem());
         }
-
-        // Updating the inertial weight with linear decaiment
-
-        inertialWeight = (inertialWeight - FINAL_WEIGHT) * ((maxIterations - getIterations()) / (double) maxIterations)
-                + FINAL_WEIGHT;
-
-        // System.out.println("Current best position ["+ iteration +"/"+
-        // maxIterations +"]: " +
-        // problem.getFitness(this.gBest));
     }
 
     /**
@@ -138,7 +126,7 @@ public abstract class PSO extends Algorithm {
     protected void updateParticleVelocity(PSOParticle currentParticle, int index) {
         PSOParticle bestParticleNeighborhood;
 
-        bestParticleNeighborhood = getBestParticleNeighborhood(index);
+        bestParticleNeighborhood = topology.getBestParticleNeighborhood(this, index);
         currentParticle.updateVelocity(inertialWeight, bestParticleNeighborhood.getBestPosition(), c1, c2);
     }
 
@@ -155,12 +143,12 @@ public abstract class PSO extends Algorithm {
         double pBestFitness = getProblem().getFitness(pBest);
         double gBestFitness = getProblem().getFitness(this.gBest);
 
-        if (getProblem().compareFitness(gBestFitness, pBestFitness)) {
+        if (getProblem().isFitnessBetterThan(gBestFitness, pBestFitness)) {
             this.gBest = pBest.clone();
         }
     }
 
-    private double[] getInitialPosition() {
+    protected double[] getInitialPosition() {
         double[] position = new double[this.dimensions];
         Random random = new Random(System.nanoTime());
 
@@ -170,14 +158,17 @@ public abstract class PSO extends Algorithm {
             position[i] = (getProblem().getUpperBound(i) - getProblem().getLowerBound(i)) * value
                     + getProblem().getLowerBound(i);
 
-            position[i] = (position[i] <= getProblem().getUpperBound(i)) ? position[i] : getProblem().getUpperBound(i);
-            position[i] = (position[i] >= getProblem().getLowerBound(i)) ? position[i] : getProblem().getLowerBound(i);
+            if (position[i] > getProblem().getUpperBound(i)) {
+                position[i] = getProblem().getUpperBound(i);
+            } else if (position[i] < getProblem().getLowerBound(i)) {
+                position[i] = getProblem().getLowerBound(i);
+            }
         }
 
         return position;
     }
 
-    private double[] getInitialVelocity() {
+    protected double[] getInitialVelocity() {
         double[] velocity = new double[this.dimensions];
         Random random = new Random(System.nanoTime());
 
@@ -267,13 +258,25 @@ public abstract class PSO extends Algorithm {
         return gBest;
     }
 
-    /**
-     * Returns the best particle of the neighborhood. The neighborhood is
-     * calculated based on the index of the swarm informed and depends on the
-     * algorithm topology.
-     * 
-     * @param index The index of the swarm.
-     * @return The best particle of the neighborhood.
-     */
-    protected abstract PSOParticle getBestParticleNeighborhood(int index);
+    public int getDimensions() {
+        return dimensions;
+    }
+
+    public double getInertialWeight() {
+        return inertialWeight;
+    }
+
+    public void setTopology(ITopology topology) {
+        this.topology = topology;
+    }
+
+    public ITopology getTopology() {
+        return topology;
+    }
+
+    @Override
+    public void setParticles(Particle[] particles) {
+        this.particles = (PSOParticle[]) particles;
+        super.setParticles(particles);
+    }
 }

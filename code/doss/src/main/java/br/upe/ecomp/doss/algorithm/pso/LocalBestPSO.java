@@ -21,28 +21,34 @@
  */
 package br.upe.ecomp.doss.algorithm.pso;
 
-import br.upe.ecomp.doss.algorithm.pso.topology.GlobalBestTopology;
+import br.upe.ecomp.doss.algorithm.pso.topology.LocalBestTopology;
 
-public class GlobalBestPSO extends PSO {
+/**
+ * Implementation of the Global Best PSO algorithm.
+ * 
+ * @author Rodrigo Castro
+ */
+public class LocalBestPSO extends PSO {
+
     /**
      * Creates a new instance of this class.
      */
-    public GlobalBestPSO() {
+    public LocalBestPSO() {
         super();
-        setTopology(new GlobalBestTopology());
+        setTopology(new LocalBestTopology());
     }
 
     /**
      * {@inheritDoc}
      */
     public String getName() {
-        return "Global Best PSO";
+        return "Local Best PSO";
     }
 
     /**
      * {@inheritDoc}
      */
     public String getDescription() {
-        return "An implementation of the global best PSO algorithm.";
+        return "An implementation of the local best PSO algorithm.";
     }
 }

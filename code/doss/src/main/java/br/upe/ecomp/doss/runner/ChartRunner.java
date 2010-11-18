@@ -42,7 +42,7 @@ import br.upe.ecomp.doss.util.PointGenerator;
  * @author Rodrigo Castro
  * @author George Moraes
  */
-public class ChartRunner implements Runnable {
+public class ChartRunner {
 
     private FileChartRecorder recorder;
     private ChartViewer viewer;
@@ -155,20 +155,24 @@ public class ChartRunner implements Runnable {
         viewer.setImage(image);
     }
 
-    @Override
-    public void run() {
-        while (running) {
-            createChart(viewer, recorder);
-            frame.repaint();
-
-            try {
-                Thread.sleep(250);
-            } catch (InterruptedException cause) {
-                // Log!
-                cause.printStackTrace();
-            }
-        }
+    public void updateChart() {
+        createChart(viewer, recorder);
+        frame.repaint();
     }
+
+    // public void run() {
+    // while (running) {
+    // createChart(viewer, recorder);
+    // frame.repaint();
+    //
+    // try {
+    // Thread.sleep(0);
+    // } catch (InterruptedException cause) {
+    // // Log!
+    // cause.printStackTrace();
+    // }
+    // }
+    // }
 
     /**
      * Runs the algorithm and shows its execution at real time.
@@ -193,10 +197,11 @@ public class ChartRunner implements Runnable {
         frame.pack();
         frame.setVisible(true);
 
+        recorder.setChartRunner(this);
         // Runs the algorithm
-        running = true;
-        new Thread(this).start();
+        // running = true;
+        // new Thread(this).start();
         algorithm.run();
-        running = false;
+        // running = false;
     }
 }

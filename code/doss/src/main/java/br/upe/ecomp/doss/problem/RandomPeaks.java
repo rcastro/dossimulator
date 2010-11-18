@@ -21,44 +21,40 @@
  */
 package br.upe.ecomp.doss.problem;
 
-import static java.lang.Math.pow;
 import br.upe.ecomp.doss.algorithm.Algorithm;
 
 /**
- * Problem 1 to test the implementation of the PSO algorithm.
+ * .
  * 
  * @author Rodrigo Castro
  */
-public class Problem1 extends Problem {
-
-    private final Integer dimensions;
+public class RandomPeaks extends Problem {
 
     /**
      * Default constructor.
      */
-    public Problem1() {
-        dimensions = 3;
+    public RandomPeaks() {
     }
 
     /**
      * {@inheritDoc}
      */
     public void init() {
-
+        // Do nothing
     }
 
     /**
      * {@inheritDoc}
      */
     public String getName() {
-        return "Problem 1";
+        return "Random Peaks";
     }
 
     /**
      * {@inheritDoc}
      */
     public String getDescription() {
-        return "Problem number 1 to test the PSO algorithm.";
+        return "Problem random peaks to test the PSO algorithm.";
     }
 
     /**
@@ -72,38 +68,46 @@ public class Problem1 extends Problem {
      * {@inheritDoc}
      */
     public double getLowerBound(int dimension) {
-        return -5.12;
+        return 0;
     }
 
     /**
      * {@inheritDoc}
      */
     public double getUpperBound(int dimension) {
-        return 5.12;
+        return 30;
     }
 
     /**
-     * This is a minimization problem. {@inheritDoc}
+     * {@inheritDoc}
      */
-    public boolean compareFitness(double pBestFitness, double currentPositionFitness) {
-        return currentPositionFitness < pBestFitness;
+    public boolean isFitnessBetterThan(double pBestFitness, double currentPositionFitness) {
+        return currentPositionFitness > pBestFitness;
     }
 
     /**
      * {@inheritDoc}
      */
     public double getFitness(double... dimension) {
-        double sphere = 0.0;
-        for (int i = 0; i < dimension.length; i++) {
-            sphere += pow(dimension[i], 2);
-        }
-        return sphere;
+        Double x = dimension[0];
+        Double y = dimension[1];
+
+        return +5 * Math.exp(-0.1 * ((x - 15) * (x - 15) + (y - 20) * (y - 20))) - 2
+                * Math.exp(-0.08 * ((x - 20) * (x - 20) + (y - 15) * (y - 15))) + 3
+                * Math.exp(-0.08 * ((x - 25) * (x - 25) + (y - 10) * (y - 10))) + 2
+                * Math.exp(-0.1 * ((x - 10) * (x - 10) + (y - 10) * (y - 10))) - 2
+                * Math.exp(-0.5 * ((x - 5) * (x - 5) + (y - 10) * (y - 10))) - 4
+                * Math.exp(-0.1 * ((x - 15) * (x - 15) + (y - 5) * (y - 5))) - 2
+                * Math.exp(-0.5 * ((x - 8) * (x - 8) + (y - 25) * (y - 25))) - 2
+                * Math.exp(-0.5 * ((x - 21) * (x - 21) + (y - 25) * (y - 25))) + 2
+                * Math.exp(-0.5 * ((x - 25) * (x - 25) + (y - 16) * (y - 16))) + 2
+                * Math.exp(-0.5 * ((x - 5) * (x - 5) + (y - 14) * (y - 14)));
     }
 
     /**
      * {@inheritDoc}
      */
     public void update(Algorithm algorithm) {
-        // TODO Auto-generated method stub
+        // Do nothing.
     }
 }

@@ -55,7 +55,7 @@ public class PSOParticle extends Particle {
         double currentParticleFitness = problem.getFitness(getCurrentPosition());
         double pBestFitness = problem.getFitness(getBestPosition());
 
-        if (problem.compareFitness(pBestFitness, currentParticleFitness)) {
+        if (problem.isFitnessBetterThan(pBestFitness, currentParticleFitness)) {
             updateBestPosition(getCurrentPosition().clone(), currentParticleFitness);
         }
     }

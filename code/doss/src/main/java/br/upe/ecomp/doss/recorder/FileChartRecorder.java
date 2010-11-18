@@ -23,6 +23,7 @@ package br.upe.ecomp.doss.recorder;
 
 import br.upe.ecomp.doss.algorithm.Algorithm;
 import br.upe.ecomp.doss.algorithm.Particle;
+import br.upe.ecomp.doss.runner.ChartRunner;
 
 /**
  * Extends the {@link FileRecorder} class to add some functionalities needed to show the simulation
@@ -36,6 +37,8 @@ public class FileChartRecorder implements IRecorder {
     private int particlesSize;
     private double[] xAxis;
     private double[] yAxis;
+
+    private ChartRunner chartRunner;
 
     /**
      * Creates a new instance of this class.
@@ -68,6 +71,8 @@ public class FileChartRecorder implements IRecorder {
             yAxis[i] = particleCurrentPosition[1];
         }
         recorder.update(algorithm);
+
+        chartRunner.updateChart();
     }
 
     /**
@@ -93,5 +98,9 @@ public class FileChartRecorder implements IRecorder {
      */
     public double[] getYAxis() {
         return yAxis;
+    }
+
+    public void setChartRunner(ChartRunner chartRunner) {
+        this.chartRunner = chartRunner;
     }
 }

@@ -56,7 +56,6 @@ public abstract class Algorithm extends Entity implements Runnable {
     public void run() {
         init();
         recorder.init(this);
-        problem.init();
         iterations = 1;
         do {
             iterate();
@@ -68,7 +67,7 @@ public abstract class Algorithm extends Entity implements Runnable {
             iterations += 1;
             if (showSimulation) {
                 try {
-                    Thread.sleep(250);
+                    Thread.sleep(100);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -82,7 +81,7 @@ public abstract class Algorithm extends Entity implements Runnable {
     }
 
     /**
-     * Verifies if any of the stop conditions registered to the current
+     * Verifies if any of the stop conditions registered in the current
      * execution of this algorithm was reached.<br />
      * The stop conditions are checked in the order they were registered.
      * 
@@ -116,16 +115,16 @@ public abstract class Algorithm extends Entity implements Runnable {
     }
 
     /**
-     * Returns the best solution of the current iteration.
+     * Returns the best solution found until the current iteration.
      * 
-     * @return the best solution of the current iteration.
+     * @return The best solution found until the current iteration.
      */
     public abstract double[] getBestSolution();
 
     /**
-     * Returns the value of best solution of the current iteration.
+     * Returns the value of best solution found until the current iteration.
      * 
-     * @return the value of best solution of the current iteration.
+     * @return The value of best solution found until the current iteration.
      */
     public abstract double getBestSolutionValue();
 
@@ -177,10 +176,10 @@ public abstract class Algorithm extends Entity implements Runnable {
     }
 
     /**
-     * Returns the list of stop conditions registered to the current execution
+     * Returns the list of stop conditions registered in the current execution
      * of this algorithm.
      * 
-     * @return The list of stop conditions registered to the current execution
+     * @return The list of stop conditions registered in the current execution
      *         of this algorithm.
      */
     public List<StopCondition> getStopConditions() {
@@ -197,10 +196,10 @@ public abstract class Algorithm extends Entity implements Runnable {
     }
 
     /**
-     * Returns the list of measurements registered to the current execution of
+     * Returns the list of measurements registered in the current execution of
      * this algorithm.
      * 
-     * @return The list of measurements registered to the current execution of
+     * @return The list of measurements registered in the current execution of
      *         this algorithm.
      */
     public List<Measurement> getMeasurements() {
