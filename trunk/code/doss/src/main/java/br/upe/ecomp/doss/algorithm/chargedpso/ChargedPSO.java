@@ -65,10 +65,16 @@ public abstract class ChargedPSO extends PSO {
             particle.updateBestPosition(position.clone(), particle.getCurrentFitness());
             particle.setVelocity(getInitialVelocity());
 
+            if (percentageChargedParticles == 100) {
+                particle.setCharge(particleCharge);
+            }
+
             particles[i] = particle;
         }
 
-        chargeParticles(particles, chargedParticles);
+        if (percentageChargedParticles < 100) {
+            chargeParticles(particles, chargedParticles);
+        }
 
         setParticles(particles);
     }

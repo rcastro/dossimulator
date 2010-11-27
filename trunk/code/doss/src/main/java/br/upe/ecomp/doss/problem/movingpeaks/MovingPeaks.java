@@ -22,10 +22,10 @@
 package br.upe.ecomp.doss.problem.movingpeaks;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.math.random.MersenneTwister;
 import org.apache.commons.math.random.RandomData;
 import org.apache.commons.math.random.RandomDataImpl;
 
@@ -41,22 +41,25 @@ import br.upe.ecomp.doss.problem.Problem;
 public class MovingPeaks extends Problem {
 
     private RandomData random;
-    private Peak[] peaks;
-
-    private double[] peak1Parameters;
-    private double[] peak2Parameters;
-    private double[] peak3Parameters;
-    private double[] peak4Parameters;
-    private double[] peak5Parameters;
-
-    private double[] lowerBound;
-    private double[] upperBound;
+    private List<Peak> peaks;
 
     @Parameter(name = "Moving length")
     private double movingLength;
 
     @Parameter(name = "Change step")
     private int changeStep;
+
+    @Parameter(name = "Correlation coeficient")
+    private double correlationCoeficient;
+
+    @Parameter(name = "Heigth severity")
+    private double heigthSeverity;
+
+    @Parameter(name = "Width severity")
+    private double widthSeverity;
+
+    @Parameter(name = "Dimensions number")
+    private int dimensions;
 
     /**
      * Default constructor.
@@ -65,49 +68,28 @@ public class MovingPeaks extends Problem {
 
     }
 
+    private void initPeak(Peak peak) {
+        int heigth = random.nextInt(50, 60); // 50;
+        double width = 0.001;
+        double[] position = new double[dimensions];
+        for (int i = 0; i < dimensions; i++) {
+            position[i] = random.nextUniform(0, 100);
+        }
+        peak.init(heigthSeverity, widthSeverity, heigth, width, position.clone());
+    }
+
     /**
      * {@inheritDoc}
      */
     public void init() {
         random = new RandomDataImpl();
 
-        setPeak1Parameters(new double[] { 0.1, 50, 8, 64, 67, 55, 4 });
-        setPeak2Parameters(new double[] { 0.1, 50, 50, 13, 76, 15, 7 });
-        setPeak3Parameters(new double[] { 0.1, 50, 9, 19, 27, 67, 24 });
-        setPeak4Parameters(new double[] { 0.1, 50, 66, 87, 65, 19, 43 });
-        setPeak5Parameters(new double[] { 0.1, 50, 76, 32, 43, 54, 65 });
-
-        defineLimits();
-
-        peaks = new Peak[5];
-        for (int i = 0; i < 5; i++) {
-            peaks[i] = new Peak();
-        }
-
-        peaks[0].init(peak1Parameters[0], peak1Parameters[1], Arrays.copyOfRange(peak1Parameters, 2, 7));
-        peaks[1].init(peak2Parameters[0], peak2Parameters[1], Arrays.copyOfRange(peak2Parameters, 2, 7));
-        peaks[2].init(peak3Parameters[0], peak3Parameters[1], Arrays.copyOfRange(peak3Parameters, 2, 7));
-        peaks[3].init(peak4Parameters[0], peak4Parameters[1], Arrays.copyOfRange(peak4Parameters, 2, 7));
-        peaks[4].init(peak5Parameters[0], peak5Parameters[1], Arrays.copyOfRange(peak5Parameters, 2, 7));
-
-    }
-
-    private void defineLimits() {
-        lowerBound = new double[5];
-        upperBound = new double[5];
-
-        List<Double> positions = new ArrayList<Double>();
-        for (int i = 2; i < 7; i++) {
-            positions.add(peak1Parameters[i]);
-            positions.add(peak2Parameters[i]);
-            positions.add(peak3Parameters[i]);
-            positions.add(peak4Parameters[i]);
-            positions.add(peak5Parameters[i]);
-
-            lowerBound[i - 2] = Collections.min(positions);
-            upperBound[i - 2] = Collections.max(positions);
-
-            positions.clear();
+        Peak peak;
+        peaks = new ArrayList<Peak>();
+        for (int i = 0; i < 10; i++) {
+            peak = new Peak(random);
+            initPeak(peak);
+            peaks.add(peak);
         }
     }
 
@@ -129,21 +111,21 @@ public class MovingPeaks extends Problem {
      * {@inheritDoc}
      */
     public int getDimensionsNumber() {
-        return 5;
+        return dimensions;
     }
 
     /**
      * {@inheritDoc}
      */
     public double getLowerBound(int dimension) {
-        return lowerBound[dimension];
+        return 0;
     }
 
     /**
      * {@inheritDoc}
      */
     public double getUpperBound(int dimension) {
-        return upperBound[dimension];
+        return 100;
     }
 
     /**
@@ -170,20 +152,24 @@ public class MovingPeaks extends Problem {
     public void update(Algorithm algorithm) {
         if (algorithm.getIterations() > 0 && algorithm.getIterations() % changeStep == 0) {
             for (Peak peak : peaks) {
-                peak.update(getMovingVector(), lowerBound, upperBound);
+                peak.update(getMovingVector(), 0, 100);
             }
         }
     }
 
     private double[] getMovingVector() {
-        double[] vector = new double[5];
-        List<Integer> indexes = new ArrayList<Integer>(Arrays.asList(0, 1, 2, 3, 4));
-        double movingLengthFraction = movingLength / 5.0;
+        MersenneTwister random = new MersenneTwister(System.nanoTime());
+        double[] vector = new double[dimensions];
+        double movingLengthFraction = movingLength / dimensions;
+        List<Integer> indexes = new ArrayList<Integer>();
+        for (int i = 0; i < dimensions; i++) {
+            indexes.add(i);
+        }
 
         int index;
         while (indexes.size() > 1) {
-            index = indexes.remove(random.nextInt(0, indexes.size() - 1));
-            vector[index] = random.nextUniform(0, movingLengthFraction);
+            index = indexes.remove(random.nextInt(indexes.size() - 1));
+            vector[index] = movingLengthFraction * random.nextDouble();
         }
         vector[indexes.remove(0)] = movingLength - getLength(vector);
 
@@ -196,26 +182,6 @@ public class MovingPeaks extends Problem {
             sum += vector[i];
         }
         return sum;
-    }
-
-    public void setPeak1Parameters(double[] peak1Parameters) {
-        this.peak1Parameters = peak1Parameters;
-    }
-
-    public void setPeak2Parameters(double[] peak2Parameters) {
-        this.peak2Parameters = peak2Parameters;
-    }
-
-    public void setPeak3Parameters(double[] peak3Parameters) {
-        this.peak3Parameters = peak3Parameters;
-    }
-
-    public void setPeak4Parameters(double[] peak4Parameters) {
-        this.peak4Parameters = peak4Parameters;
-    }
-
-    public void setPeak5Parameters(double[] peak5Parameters) {
-        this.peak5Parameters = peak5Parameters;
     }
 
     public void setChangeStep(int changeStep) {

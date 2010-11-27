@@ -23,6 +23,8 @@ package br.upe.ecomp.doss.algorithm.pso;
 
 import java.util.Random;
 
+import org.apache.commons.math.random.MersenneTwister;
+
 import br.upe.ecomp.doss.algorithm.Algorithm;
 import br.upe.ecomp.doss.algorithm.Particle;
 import br.upe.ecomp.doss.algorithm.pso.topology.ITopology;
@@ -148,9 +150,30 @@ public abstract class PSO extends Algorithm {
         }
     }
 
+    // protected double[] getInitialPosition() {
+    // double[] position = new double[this.dimensions];
+    // Random random = new Random(System.nanoTime());
+    //
+    // for (int i = 0; i < this.dimensions; i++) {
+    // double value = random.nextDouble();
+    //
+    // position[i] = (getProblem().getUpperBound(i) - getProblem().getLowerBound(i)) * value
+    // + getProblem().getLowerBound(i);
+    //
+    // if (position[i] > getProblem().getUpperBound(i)) {
+    // position[i] = getProblem().getUpperBound(i);
+    // } else if (position[i] < getProblem().getLowerBound(i)) {
+    // position[i] = getProblem().getLowerBound(i);
+    // }
+    // }
+    //
+    // return position;
+    // }
+
     protected double[] getInitialPosition() {
         double[] position = new double[this.dimensions];
-        Random random = new Random(System.nanoTime());
+        // Random random = new Random(System.nanoTime());
+        MersenneTwister random = new MersenneTwister(System.nanoTime());
 
         for (int i = 0; i < this.dimensions; i++) {
             double value = random.nextDouble();
@@ -164,7 +187,6 @@ public abstract class PSO extends Algorithm {
                 position[i] = getProblem().getLowerBound(i);
             }
         }
-
         return position;
     }
 

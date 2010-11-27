@@ -49,7 +49,7 @@ public class Main {
      * @param args Possible arguments for the main class.
      */
     public static void main(String[] args) {
-        int option = 2;
+        int option = 3;
 
         switch (option) {
             case 0:
@@ -59,31 +59,167 @@ public class Main {
                 runFromTestScenarioFile();
                 break;
             case 2:
-                printCollectiveFitness("/Users/rodrigo/Desktop/simulacoes_variacao_carga/tipo_I/10_porcento",
-                        "Charged PSO 10");
-                printCollectiveFitness("/Users/rodrigo/Desktop/simulacoes_variacao_carga/tipo_I/50_porcento",
-                        "Charged PSO 50");
-                printCollectiveFitness("/Users/rodrigo/Desktop/simulacoes_variacao_carga/tipo_I/80_porcento",
-                        "Charged PSO 80");
-                printCollectiveFitness("/Users/rodrigo/Desktop/simulacoes_variacao_carga/tipo_I/100_porcento",
-                        "Charged PSO 100");
-
-                // printCollectiveFitness(
-                // "/Users/rodrigo/Documents/UPE/Cadeiras/2010.2/PFC/workspace/dosa/Charged_Global_Best_PSO",
-                // "Charged PSO");
-                // printCollectiveFitness("/Users/rodrigo/Documents/UPE/Cadeiras/2010.2/PFC/workspace/dosa/Clan_PSO",
-                // "Clan PSO");
-                // printCollectiveFitness(
-                // "/Users/rodrigo/Documents/UPE/Cadeiras/2010.2/PFC/workspace/dosa/Global_Best_PSO",
-                // "Global Best PSO");
-                // printCollectiveFitness(
-                // "/Users/rodrigo/Documents/UPE/Cadeiras/2010.2/PFC/workspace/dosa/Fish_School_Search - DF1",
-                // "Fish School Search");
+                // printCollectiveFitnessExpirement1();
+                printCollectiveFitnessExpirement2();
+                break;
+            case 3:
+                printStandardDeviationExperiment1();
                 break;
             default:
                 System.out.println("Invalid option.");
                 break;
         }
+    }
+
+    private static void printStandardDeviationExperiment1() {
+        System.out.println("Função DF1:");
+
+        System.out.println("Tipo I:");
+        printStandardDeviation("/Users/rodrigo/Desktop/simulacoes/estudo_de_caso_1/DF1/tipo_I/Charged_Local_Best_PSO",
+                "Charged_Local_Best_PSO");
+        printStandardDeviation("/Users/rodrigo/Desktop/simulacoes/estudo_de_caso_1/DF1/tipo_I/Clan_PSO", "Clan_PSO");
+        printStandardDeviation("/Users/rodrigo/Desktop/simulacoes/estudo_de_caso_1/DF1/tipo_I/Fish_School_Search",
+                "Fish_School_Search");
+
+        System.out.println("\nTipo II:");
+        printStandardDeviation("/Users/rodrigo/Desktop/simulacoes/estudo_de_caso_1/DF1/tipo_II/Charged_Local_Best_PSO",
+                "Charged_Local_Best_PSO");
+        printStandardDeviation("/Users/rodrigo/Desktop/simulacoes/estudo_de_caso_1/DF1/tipo_II/Clan_PSO", "Clan_PSO");
+        printStandardDeviation("/Users/rodrigo/Desktop/simulacoes/estudo_de_caso_1/DF1/tipo_II/Fish_School_Search",
+                "Fish_School_Search");
+
+        System.out.println("\nTipo III:");
+        printStandardDeviation(
+                "/Users/rodrigo/Desktop/simulacoes/estudo_de_caso_1/DF1/tipo_III/Charged_Local_Best_PSO",
+                "Charged_Local_Best_PSO");
+        printStandardDeviation("/Users/rodrigo/Desktop/simulacoes/estudo_de_caso_1/DF1/tipo_III/Clan_PSO", "Clan_PSO");
+        printStandardDeviation("/Users/rodrigo/Desktop/simulacoes/estudo_de_caso_1/DF1/tipo_III/Fish_School_Search",
+                "Fish_School_Search");
+
+        System.out.println("Função Moving Peaks:");
+
+        System.out.println("\nTipo I:");
+        printStandardDeviation(
+                "/Users/rodrigo/Desktop/simulacoes/estudo_de_caso_1/Moving Peaks/tipo_I/Charged_Local_Best_PSO",
+                "Charged_Local_Best_PSO");
+        printStandardDeviation("/Users/rodrigo/Desktop/simulacoes/estudo_de_caso_1/Moving Peaks/tipo_I/Clan_PSO",
+                "Clan_PSO");
+        printStandardDeviation(
+                "/Users/rodrigo/Desktop/simulacoes/estudo_de_caso_1/Moving Peaks/tipo_I/Fish_School_Search",
+                "Fish_School_Search");
+
+        System.out.println("\nTipo II:");
+        printStandardDeviation(
+                "/Users/rodrigo/Desktop/simulacoes/estudo_de_caso_1/Moving Peaks/tipo_II/Charged_Local_Best_PSO",
+                "Charged_Local_Best_PSO");
+        printStandardDeviation("/Users/rodrigo/Desktop/simulacoes/estudo_de_caso_1/Moving Peaks/tipo_II/Clan_PSO",
+                "Clan_PSO");
+        printStandardDeviation(
+                "/Users/rodrigo/Desktop/simulacoes/estudo_de_caso_1/Moving Peaks/tipo_II/Fish_School_Search",
+                "Fish_School_Search");
+
+        System.out.println("\nTipo III:");
+        printStandardDeviation(
+                "/Users/rodrigo/Desktop/simulacoes/estudo_de_caso_1/Moving Peaks/tipo_III/Charged_Local_Best_PSO",
+                "Charged_Local_Best_PSO");
+        printStandardDeviation("/Users/rodrigo/Desktop/simulacoes/estudo_de_caso_1/Moving Peaks/tipo_III/Clan_PSO",
+                "Clan_PSO");
+        printStandardDeviation(
+                "/Users/rodrigo/Desktop/simulacoes/estudo_de_caso_1/Moving Peaks/tipo_III/Fish_School_Search",
+                "Fish_School_Search");
+
+    }
+
+    private static void printStandardDeviation(String path, String name) {
+        File directory = new File(path);
+        String measurement = "Mean Fitness";
+        System.out.println(name + ": " + CollectiveFitnessMeasure.calculateStandardDeviation(directory, measurement));
+    }
+
+    private static void printCollectiveFitnessExpirement1() {
+        System.out.println("Função DF1:");
+
+        System.out.println("Tipo I:");
+        printCollectiveFitness("/Users/rodrigo/Desktop/simulacoes/estudo_de_caso_1/DF1/tipo_I/Charged_Local_Best_PSO",
+                "Charged_Local_Best_PSO");
+        printCollectiveFitness("/Users/rodrigo/Desktop/simulacoes/estudo_de_caso_1/DF1/tipo_I/Clan_PSO", "Clan_PSO");
+        printCollectiveFitness("/Users/rodrigo/Desktop/simulacoes/estudo_de_caso_1/DF1/tipo_I/Fish_School_Search",
+                "Fish_School_Search");
+
+        System.out.println("\nTipo II:");
+        printCollectiveFitness("/Users/rodrigo/Desktop/simulacoes/estudo_de_caso_1/DF1/tipo_II/Charged_Local_Best_PSO",
+                "Charged_Local_Best_PSO");
+        printCollectiveFitness("/Users/rodrigo/Desktop/simulacoes/estudo_de_caso_1/DF1/tipo_II/Clan_PSO", "Clan_PSO");
+        printCollectiveFitness("/Users/rodrigo/Desktop/simulacoes/estudo_de_caso_1/DF1/tipo_II/Fish_School_Search",
+                "Fish_School_Search");
+
+        System.out.println("\nTipo III:");
+        printCollectiveFitness(
+                "/Users/rodrigo/Desktop/simulacoes/estudo_de_caso_1/DF1/tipo_III/Charged_Local_Best_PSO",
+                "Charged_Local_Best_PSO");
+        printCollectiveFitness("/Users/rodrigo/Desktop/simulacoes/estudo_de_caso_1/DF1/tipo_III/Clan_PSO", "Clan_PSO");
+        printCollectiveFitness("/Users/rodrigo/Desktop/simulacoes/estudo_de_caso_1/DF1/tipo_III/Fish_School_Search",
+                "Fish_School_Search");
+
+        System.out.println("Função Moving Peaks:");
+
+        System.out.println("\nTipo I:");
+        printCollectiveFitness(
+                "/Users/rodrigo/Desktop/simulacoes/estudo_de_caso_1/Moving Peaks/tipo_I/Charged_Local_Best_PSO",
+                "Charged_Local_Best_PSO");
+        printCollectiveFitness("/Users/rodrigo/Desktop/simulacoes/estudo_de_caso_1/Moving Peaks/tipo_I/Clan_PSO",
+                "Clan_PSO");
+        printCollectiveFitness(
+                "/Users/rodrigo/Desktop/simulacoes/estudo_de_caso_1/Moving Peaks/tipo_I/Fish_School_Search",
+                "Fish_School_Search");
+
+        System.out.println("\nTipo II:");
+        printCollectiveFitness(
+                "/Users/rodrigo/Desktop/simulacoes/estudo_de_caso_1/Moving Peaks/tipo_II/Charged_Local_Best_PSO",
+                "Charged_Local_Best_PSO");
+        printCollectiveFitness("/Users/rodrigo/Desktop/simulacoes/estudo_de_caso_1/Moving Peaks/tipo_II/Clan_PSO",
+                "Clan_PSO");
+        printCollectiveFitness(
+                "/Users/rodrigo/Desktop/simulacoes/estudo_de_caso_1/Moving Peaks/tipo_II/Fish_School_Search",
+                "Fish_School_Search");
+
+        System.out.println("\nTipo III:");
+        printCollectiveFitness(
+                "/Users/rodrigo/Desktop/simulacoes/estudo_de_caso_1/Moving Peaks/tipo_III/Charged_Local_Best_PSO",
+                "Charged_Local_Best_PSO");
+        printCollectiveFitness("/Users/rodrigo/Desktop/simulacoes/estudo_de_caso_1/Moving Peaks/tipo_III/Clan_PSO",
+                "Clan_PSO");
+        printCollectiveFitness(
+                "/Users/rodrigo/Desktop/simulacoes/estudo_de_caso_1/Moving Peaks/tipo_III/Fish_School_Search",
+                "Fish_School_Search");
+    }
+
+    private static void printCollectiveFitnessExpirement2() {
+        System.out.println("Função DF1");
+
+        System.out.println("\nTipo I:");
+        printCollectiveFitness("/Users/rodrigo/Desktop/simulacoes/estudo_de_caso_2/DF1/tipo_I/10_porcento",
+                "10_porcento");
+        printCollectiveFitness("/Users/rodrigo/Desktop/simulacoes/estudo_de_caso_2/DF1/tipo_I/50_porcento",
+                "50_porcento");
+        printCollectiveFitness("/Users/rodrigo/Desktop/simulacoes/estudo_de_caso_2/DF1/tipo_I/100_porcento",
+                "100_porcento");
+
+        System.out.println("\nTipo II:");
+        printCollectiveFitness("/Users/rodrigo/Desktop/simulacoes/estudo_de_caso_2/DF1/tipo_II/10_porcento",
+                "10_porcento");
+        printCollectiveFitness("/Users/rodrigo/Desktop/simulacoes/estudo_de_caso_2/DF1/tipo_II/50_porcento",
+                "50_porcento");
+        printCollectiveFitness("/Users/rodrigo/Desktop/simulacoes/estudo_de_caso_2/DF1/tipo_II/100_porcento",
+                "100_porcento");
+
+        System.out.println("\nTipo III:");
+        printCollectiveFitness("/Users/rodrigo/Desktop/simulacoes/estudo_de_caso_2/DF1/tipo_III/10_porcento",
+                "10_porcento");
+        printCollectiveFitness("/Users/rodrigo/Desktop/simulacoes/estudo_de_caso_2/DF1/tipo_III/50_porcento",
+                "50_porcento");
+        printCollectiveFitness("/Users/rodrigo/Desktop/simulacoes/estudo_de_caso_2/DF1/tipo_III/100_porcento",
+                "100_porcento");
     }
 
     private static void run() {

@@ -27,9 +27,9 @@ public class DFParameters {
         this.aR = 1.2;
         this.aX = 3.2;
         this.dimensions = 10;
-        this.dynamicH = true;
-        this.dynamicR = true;
-        this.dynamicX = false;
+        this.dynamicH = false;
+        this.dynamicR = false;
+        this.dynamicX = true;
         this.hBase = 2;
         this.hRange = 10;
         this.hScale = 0.5;
