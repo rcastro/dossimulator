@@ -52,12 +52,7 @@ public class CollectiveFitnessMeasure {
 
         List<File> files = getFilesOnDirectory(directory);
 
-        double[] means = new double[files.size()];
-        int currentFile = 0;
-        for (File file : files) {
-            means[currentFile] = getMean(file, measurement);
-            currentFile++;
-        }
+        double[] means = getMeans(files, measurement);
 
         double collectiveMean = 0;
         for (int i = 0; i < means.length; i++) {
@@ -65,6 +60,21 @@ public class CollectiveFitnessMeasure {
         }
 
         return collectiveMean / means.length;
+    }
+
+    public static double calculateStandardDeviation(File directory, String measurement) {
+        double[] means = getMeans(getFilesOnDirectory(directory), measurement);
+        return Statistics.getStandardDeviation(means);
+    }
+
+    private static double[] getMeans(List<File> files, String measurement) {
+        double[] means = new double[files.size()];
+        int currentFile = 0;
+        for (File file : files) {
+            means[currentFile] = getMean(file, measurement);
+            currentFile++;
+        }
+        return means;
     }
 
     // private static double getMean(File file, String measurement) {

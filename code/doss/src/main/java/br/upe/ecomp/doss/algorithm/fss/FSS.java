@@ -21,8 +21,7 @@
  */
 package br.upe.ecomp.doss.algorithm.fss;
 
-import java.util.Random;
-
+import org.apache.commons.math.random.MersenneTwister;
 import org.apache.commons.math.random.RandomData;
 import org.apache.commons.math.random.RandomDataImpl;
 import org.apache.commons.math.util.MathUtils;
@@ -132,7 +131,7 @@ public class FSS extends Algorithm {
     }
 
     private void updateSteps() {
-        double factor = getIterations() / 30000;
+        double factor = getIterations() / 1000;
         for (int i = 0; i < dimensions; i++) {
             stepInd[i] = stepInd[i] - (stepIndInit[i] - stepIndFinal[i]) * factor;
             stepVol[i] = stepVol[i] - (stepVolInit[i] - stepVolFinal[i]) * factor;
@@ -284,7 +283,8 @@ public class FSS extends Algorithm {
 
     private double[] getInitialPosition() {
         double[] position = new double[this.dimensions];
-        Random random = new Random(System.nanoTime());
+        // Random random = new Random(System.nanoTime());
+        MersenneTwister random = new MersenneTwister(System.nanoTime());
 
         for (int i = 0; i < this.dimensions; i++) {
             double value = random.nextDouble();

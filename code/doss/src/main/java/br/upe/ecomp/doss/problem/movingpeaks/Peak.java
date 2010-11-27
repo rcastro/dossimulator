@@ -22,7 +22,6 @@
 package br.upe.ecomp.doss.problem.movingpeaks;
 
 import org.apache.commons.math.random.RandomData;
-import org.apache.commons.math.random.RandomDataImpl;
 
 /**
  * Represents a peak of the Moving peaks benchmark.
@@ -32,55 +31,67 @@ import org.apache.commons.math.random.RandomDataImpl;
  */
 public class Peak {
 
-    private static final double THRESHOLD = 0.7;
+    private static final double THRESHOLD = 0.6;
 
     private RandomData random;
     private double[] peakPosition;
     private double heigth;
     private double width;
+    private double heigthSeverity;
+    private double widthSeverity;
 
-    public void init(double heigth, double width, double... position) {
-        random = new RandomDataImpl();
+    public Peak(RandomData random) {
+        this.random = random;
+    }
 
+    public void init(double heigthSeverity, double widthSeverity, double heigth, double width, double... position) {
+        // random = new RandomDataImpl();
+
+        this.heigthSeverity = heigthSeverity;
+        this.widthSeverity = widthSeverity;
         this.heigth = heigth;
         this.width = width;
         this.peakPosition = position;
     }
 
-    public void update(double[] positionIncrement, double[] lowerBound, double[] upperBound) {
+    public void update(double[] positionIncrement, double lowerBound, double upperBound) {
         updateHeigth();
         updateWidth();
         updatePosition(positionIncrement, lowerBound, upperBound);
     }
 
     public double getFitness(double[] currentPosition) {
-        double weightedDifference = 0;
-        double difference;
+        double difference = 0;
         for (int i = 0; i < peakPosition.length; i++) {
-            difference = currentPosition[i] - peakPosition[i];
-            weightedDifference += width * Math.pow(difference, 2);
+            difference += Math.pow(currentPosition[i] - peakPosition[i], 2);
         }
-        return heigth / (1 + weightedDifference);
+        return heigth / (1 + width * difference);
     }
 
     private void updateHeigth() {
-        heigth = heigth + 7 * random.nextGaussian(0, 1);
+        heigth = Math.abs(heigth + heigthSeverity * random.nextGaussian(0, 1));
     }
 
     private void updateWidth() {
-        width = width + 0.01 * random.nextGaussian(0, 1);
+        width = Math.abs(width + widthSeverity * random.nextGaussian(0, 1));
     }
 
-    private void updatePosition(double[] positionIncrement, double[] lowerBound, double[] upperBound) {
+    private void updatePosition(double[] positionIncrement, double lowerBound, double upperBound) {
         double newPosition;
         for (int i = 0; i < peakPosition.length; i++) {
             if (random.nextUniform(0, 1) >= THRESHOLD) {
                 positionIncrement[i] *= -1;
             }
             newPosition = peakPosition[i] + positionIncrement[i];
-            if (newPosition >= lowerBound[i] && newPosition <= upperBound[i]) {
-                peakPosition[i] = newPosition;
-            }
+            // if (newPosition >= lowerBound && newPosition <= upperBound) {
+            // peakPosition[i] = newPosition;
+            // }
+            peakPosition[i] = newPosition;
         }
+
+        // for (int i = 0; i < peakPosition.length; i++) {
+        // // position[i] = RandomUtils.generateRandom(100);
+        // peakPosition[i] = random.nextUniform(0, 100);
+        // }
     }
 }
