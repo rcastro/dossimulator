@@ -1,3 +1,24 @@
+/**
+ * Copyright (C) 2010
+ * Swarm Intelligence Team (SIT)
+ * Department of Computer and Systems
+ * University of Pernambuco
+ * Brazil
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ */
 package br.upe.ecomp.doss.problem.df1;
 
 public class DFParameters {
@@ -20,18 +41,18 @@ public class DFParameters {
     private boolean dynamicX; // mudanca na posicao do pico?
 
     /**
-     * Construtor com valores padroes para teste
+     * Construtor com valores padroes para teste.
      */
     public DFParameters() {
         this.aH = 3.2;
         this.aR = 1.2;
         this.aX = 3.2;
-        this.dimensions = 10;
+        this.dimensions = 2;
         this.dynamicH = false;
         this.dynamicR = false;
         this.dynamicX = true;
-        this.hBase = 2;
-        this.hRange = 10;
+        this.hBase = 40;
+        this.hRange = 20;
         this.hScale = 0.5;
         this.rBase = 1;
         this.rRange = 7;

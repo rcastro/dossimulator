@@ -24,7 +24,7 @@ public class ChargedClanPSO extends ClanPSO {
 
     @Override
     public String getName() {
-        return "Charged Clan PSO";
+        return "Clan Charged PSO";
     }
 
     @Override
@@ -76,7 +76,7 @@ public class ChargedClanPSO extends ClanPSO {
         ChargedPSOParticle chargedParticle = (ChargedPSOParticle) currentParticle;
         PSOParticle bestParticleNeighborhood = getTopology().getBestParticleNeighborhood(this, index);
 
-        chargedParticle.updateVelocity(getInertialWeight(), bestParticleNeighborhood.getBestPosition(), getC1(),
+        chargedParticle.updateVelocity(getInertiaWeight(), bestParticleNeighborhood.getBestPosition(), getC1(),
                 getC2(), calculateAcceleration(chargedParticle));
     }
 

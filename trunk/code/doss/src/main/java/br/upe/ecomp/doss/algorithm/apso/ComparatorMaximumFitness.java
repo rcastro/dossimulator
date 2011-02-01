@@ -19,32 +19,28 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
-package br.upe.ecomp.doss.algorithm.chargedpso;
+package br.upe.ecomp.doss.algorithm.apso;
 
-import br.upe.ecomp.doss.algorithm.pso.topology.LocalBestTopology;
+import java.util.Comparator;
+
+import br.upe.ecomp.doss.algorithm.Particle;
 
 /**
- * .
+ * Compare particles by the current fitness value in ascending order.
  * 
- * @author Rodrigo Castro
+ * @author George Moraes
  */
-public class ChargedLocalBestPSO extends ChargedPSO {
-
-    /**
-     * Creates a new instance of this class.
-     */
-    public ChargedLocalBestPSO() {
-        super();
-        setTopology(new LocalBestTopology());
-    }
+public class ComparatorMaximumFitness implements Comparator<Particle> {
 
     @Override
-    public String getName() {
-        return "Local Best Charged PSO";
+    public int compare(Particle particle1, Particle particle2) {
+        if (particle1.getBestFitness() < particle2.getBestFitness()) {
+            return -1;
+        } else if (particle1.getBestFitness() > particle2.getBestFitness()) {
+            return 1;
+        } else {
+            return 0;
+        }
     }
 
-    @Override
-    public String getDescription() {
-        return "An implementation of the Charged PSO algorithm.";
-    }
 }

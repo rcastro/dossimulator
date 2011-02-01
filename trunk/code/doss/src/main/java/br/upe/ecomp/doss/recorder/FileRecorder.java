@@ -30,7 +30,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import br.upe.ecomp.doss.algorithm.Algorithm;
-import br.upe.ecomp.doss.algorithm.Particle;
+import br.upe.ecomp.doss.core.entity.EntityPropertyManager;
 import br.upe.ecomp.doss.measurement.Measurement;
 
 /**
@@ -47,6 +47,9 @@ public class FileRecorder implements IRecorder {
     private String filePath;
     private String algorithmName;
 
+    public FileRecorder() {
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -57,6 +60,7 @@ public class FileRecorder implements IRecorder {
         filePath = problemDirectoryName + File.separatorChar + File.separatorChar;
         createFile();
         printFileHeader(algorithm);
+        printAlgorithmParameters(algorithm);
     }
 
     /**
@@ -67,11 +71,11 @@ public class FileRecorder implements IRecorder {
 
         printIterationHeader(algorithm.getIterations());
 
-        Particle[] particles = algorithm.getParticles();
-        for (Particle particle : particles) {
-            position = particle.getCurrentPosition();
-            printPosition(position);
-        }
+        // Particle[] particles = algorithm.getParticles();
+        // for (Particle particle : particles) {
+        // position = particle.getCurrentPosition();
+        // printPosition(position);
+        // }
 
         printMeasurementHeader(algorithm.getIterations());
 
@@ -117,6 +121,22 @@ public class FileRecorder implements IRecorder {
             }
         }
         return sbMeasurements.toString();
+    }
+
+    private void printAlgorithmParameters(Algorithm algorithm) {
+        try {
+            file.write("\nParameters \n");
+            StringBuilder sbParameters = new StringBuilder();
+            for (String paramName : EntityPropertyManager.getFieldsName(algorithm)) {
+                sbParameters.append(paramName);
+                sbParameters.append(": ");
+                sbParameters.append(EntityPropertyManager.getValueAsString(algorithm, paramName));
+                sbParameters.append("\n");
+            }
+            file.write(sbParameters.toString());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void printMeasurementHeader(int iteration) {

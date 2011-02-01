@@ -236,7 +236,7 @@ public final class AlgorithmXMLParser {
                 readParameters(algorithmNode, algorithm);
             }
         } catch (ClassNotFoundException e) {
-            throw new InfraException("Could not fint class " + algorithmNode.getAttribute(CLASS), e);
+            throw new InfraException("Could not find class " + algorithmNode.getAttribute(CLASS), e);
         } catch (InstantiationException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {

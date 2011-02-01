@@ -87,6 +87,8 @@ public final class EntityPropertyManager {
                     field.setDouble(entity, Double.parseDouble(value));
                 } else if (field.getType().equals(String.class)) {
                     field.set(entity, value);
+                } else if (field.getType().equals(boolean.class)) {
+                    field.setBoolean(entity, Boolean.parseBoolean(value));
                 }
             } catch (NumberFormatException e) {
                 e.printStackTrace();

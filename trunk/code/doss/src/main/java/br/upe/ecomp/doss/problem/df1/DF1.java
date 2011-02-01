@@ -1,3 +1,24 @@
+/**
+ * Copyright (C) 2010
+ * Swarm Intelligence Team (SIT)
+ * Department of Computer and Systems
+ * University of Pernambuco
+ * Brazil
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ */
 package br.upe.ecomp.doss.problem.df1;
 
 import java.util.ArrayList;
@@ -10,28 +31,6 @@ import br.upe.ecomp.doss.problem.Problem;
 
 public class DF1 extends Problem {
 
-    private static final String AH = "aH"; // coeficiente da funcao logistica
-    private static final String AR = "aR"; // coeficiente da funcao logistica
-    private static final String AX = "aX"; // coeficiente da funcao logistica
-    private static final String XBASE = "xBase";
-    private static final String XRANGE = "xRange";
-    private static final String XSCALE = "xScale";
-    private static final String HBASE = "hBase";
-    private static final String HRANGE = "hRange";
-    private static final String HSCALE = "hScale";
-    private static final String RBASE = "rBase";
-    private static final String RRANGE = "rRange";
-    private static final String RSCALE = "rScale";
-    private static final String IS_DYNAMIC_H = "dynamicH"; // mudanca na altura
-                                                           // do pico?
-    private static final String IS_DYNAMIC_R = "dynamicR"; // mudanca na
-                                                           // inclinacao do
-                                                           // pico?
-    private static final String IS_DYNAMIC_X = "dynamicX"; // mudanca na posicao
-                                                           // do pico?
-    private static final String NUMPEAKS = "numPeaks";
-    private static final String DIMENSIONS = "dimensions";
-
     private List<Peak> peakList;
     private DFParameters dfParameters;
 
@@ -40,6 +39,18 @@ public class DF1 extends Problem {
 
     @Parameter(name = "Change step")
     private int changeStep;
+
+    @Parameter(name = "Dimensions")
+    private int dimensions;
+
+    @Parameter(name = "Dynamic Position")
+    private boolean dynamicPosition;
+
+    @Parameter(name = "Dynamic Height")
+    private boolean dynamicHeight;
+
+    @Parameter(name = "Dynamic Slope")
+    private boolean dynamicSlope;
 
     /**
      * Default constructor.
@@ -54,6 +65,10 @@ public class DF1 extends Problem {
     public void init() {
         this.peakList = new ArrayList<Peak>(numPeaks);
         this.dfParameters = new DFParameters();
+        this.dfParameters.setDimensions(dimensions);
+        this.dfParameters.setDynamicX(dynamicPosition);
+        this.dfParameters.setDynamicH(dynamicHeight);
+        this.dfParameters.setDynamicR(dynamicSlope);
         createFunctions(dfParameters);
     }
 
@@ -137,7 +152,28 @@ public class DF1 extends Problem {
         this.numPeaks = numPeaks;
     }
 
+    public int getChangeStep() {
+        return changeStep;
+    }
+
     public void setChangeStep(int changeStep) {
         this.changeStep = changeStep;
     }
+
+    public void setDynamicPosition(boolean dynamicPosition) {
+        this.dynamicPosition = dynamicPosition;
+    }
+
+    public void setDynamicHeight(boolean dynamicHeight) {
+        this.dynamicHeight = dynamicHeight;
+    }
+
+    public void setDynamicSlope(boolean dynamicSlope) {
+        this.dynamicSlope = dynamicSlope;
+    }
+
+    public void setDimensions(int dimensions) {
+        this.dimensions = dimensions;
+    }
+
 }

@@ -37,7 +37,7 @@ import br.upe.ecomp.doss.recorder.FileRecorder;
  */
 public class Runner implements Runnable {
 
-    private static final int SLEEP_TIME = 2000;
+    private static final int SLEEP_TIME = 200;
 
     private String filePath;
     private String fileName;
@@ -60,6 +60,18 @@ public class Runner implements Runnable {
      */
     public Runner(Algorithm algorithm, boolean showSimulation) {
         this(1, showSimulation);
+        this.algorithm = algorithm;
+    }
+
+    /**
+     * Configures this class.
+     * 
+     * @param algorithm The {@link Algorithm} instance that will be executed.
+     * @param simulationsNumber The number of simulations that will be executed.
+     * @param showSimulation Indicates if the simulation execution will be showed at real time.
+     */
+    public Runner(Algorithm algorithm, int simulationsNumber, boolean showSimulation) {
+        this(simulationsNumber, showSimulation);
         this.algorithm = algorithm;
     }
 
@@ -119,7 +131,7 @@ public class Runner implements Runnable {
      * 
      * @param listener An instance of {@link RunnerListener}.
      */
-    public void addLitener(RunnerListener listener) {
+    public void addListener(RunnerListener listener) {
         listeners.add(listener);
     }
 }

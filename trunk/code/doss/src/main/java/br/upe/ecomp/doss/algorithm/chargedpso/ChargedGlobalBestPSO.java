@@ -14,7 +14,7 @@ public class ChargedGlobalBestPSO extends ChargedPSO {
 
     @Override
     public String getName() {
-        return "Charged Global Best PSO";
+        return "Global Best Charged PSO";
     }
 
     @Override
