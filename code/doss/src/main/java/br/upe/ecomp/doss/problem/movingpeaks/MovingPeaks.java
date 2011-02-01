@@ -184,6 +184,11 @@ public class MovingPeaks extends Problem {
         return sum;
     }
 
+    @Override
+    public int getChangeStep() {
+        return this.changeStep;
+    }
+
     public void setChangeStep(int changeStep) {
         this.changeStep = changeStep;
     }
@@ -191,4 +196,5 @@ public class MovingPeaks extends Problem {
     public void setMovingLength(double movingLength) {
         this.movingLength = movingLength;
     }
+
 }

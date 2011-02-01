@@ -110,4 +110,12 @@ public class RandomPeaks extends Problem {
     public void update(Algorithm algorithm) {
         // Do nothing.
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int getChangeStep() {
+        // Do nothing.
+        return 0;
+    }
 }

@@ -23,6 +23,8 @@ package br.upe.ecomp.doss.algorithm.pso;
 
 import java.util.Random;
 
+import org.apache.commons.math.random.MersenneTwister;
+
 import br.upe.ecomp.doss.algorithm.Particle;
 import br.upe.ecomp.doss.problem.Problem;
 
@@ -34,6 +36,7 @@ import br.upe.ecomp.doss.problem.Problem;
 public class PSOParticle extends Particle {
 
     private double[] velocity;
+    private double velocityClampingPercent = 0.5;
 
     /**
      * Creates a new instance of this class.
@@ -67,8 +70,10 @@ public class PSOParticle extends Particle {
      * @param bestParticleNeighborhood The best particle in the neighborhood
      * @param c1 The cognitive component
      * @param c2 The social component
+     * @param problem The problem that we are trying to solve.
      */
-    public void updateVelocity(double inertialWeight, double[] bestParticleNeighborhood, double c1, double c2) {
+    public void updateVelocity(double inertialWeight, double[] bestParticleNeighborhood, double c1, double c2,
+            Problem problem) {
         Random random = new Random();
         double r1 = random.nextDouble();
         double r2 = random.nextDouble();
@@ -77,6 +82,10 @@ public class PSOParticle extends Particle {
         for (int i = 0; i < getDimensions(); i++) {
             velocity[i] = inertialWeight * velocity[i] + c1 * r1 * (pBest[i] - getCurrentPosition()[i]) + c2 * r2
                     * (bestParticleNeighborhood[i] - getCurrentPosition()[i]);
+
+            double maxVelocity = (problem.getUpperBound(i) - problem.getLowerBound(i)) * velocityClampingPercent;
+            velocity[i] = (velocity[i] > maxVelocity) ? maxVelocity : velocity[i];
+            velocity[i] = (velocity[i] < -maxVelocity) ? -maxVelocity : velocity[i];
         }
     }
 
@@ -86,12 +95,22 @@ public class PSOParticle extends Particle {
      * @param problem The problem that we are trying to solve.
      */
     public void updateCurrentPosition(Problem problem) {
+        MersenneTwister random = new MersenneTwister(System.nanoTime());
         double[] position = getCurrentPosition();
+        double newPosition;
         for (int i = 0; i < getDimensions(); i++) {
-            position[i] = position[i] + velocity[i];
+            newPosition = position[i] + velocity[i];
 
-            position[i] = (position[i] <= problem.getUpperBound(i)) ? position[i] : problem.getUpperBound(i);
-            position[i] = (position[i] >= problem.getLowerBound(i)) ? position[i] : problem.getLowerBound(i);
+            // if a particle exceeds the search space limit, so inverts the particle velocity on
+            // that dimension which the search space limit was exceeded
+            if (newPosition >= problem.getUpperBound(i)) {
+                position[i] = problem.getUpperBound(i) - velocity[i] * random.nextDouble();
+            } else if (newPosition <= problem.getLowerBound(i)) {
+                position[i] = problem.getLowerBound(i) - velocity[i] * random.nextDouble();
+            } else {
+                position[i] = newPosition;
+            }
+
         }
         updateCurrentPosition(position, problem.getFitness(position));
     }

@@ -19,32 +19,26 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
-package br.upe.ecomp.doss.algorithm.chargedpso;
+package br.upe.ecomp.doss.algorithm.apso;
 
-import br.upe.ecomp.doss.algorithm.pso.topology.LocalBestTopology;
+import java.util.Comparator;
 
 /**
- * .
+ * Compare particles by the mean distance to others particles.
  * 
- * @author Rodrigo Castro
+ * @author George Moraes
  */
-public class ChargedLocalBestPSO extends ChargedPSO {
-
-    /**
-     * Creates a new instance of this class.
-     */
-    public ChargedLocalBestPSO() {
-        super();
-        setTopology(new LocalBestTopology());
-    }
+public class ComparatorMeanDistance implements Comparator<APSOParticle> {
 
     @Override
-    public String getName() {
-        return "Local Best Charged PSO";
+    public int compare(APSOParticle particle1, APSOParticle particle2) {
+        if (particle1.getMeanDistanceToOthersParticles() < particle2.getMeanDistanceToOthersParticles()) {
+            return -1;
+        } else if (particle1.getMeanDistanceToOthersParticles() > particle2.getMeanDistanceToOthersParticles()) {
+            return 1;
+        } else {
+            return 0;
+        }
     }
 
-    @Override
-    public String getDescription() {
-        return "An implementation of the Charged PSO algorithm.";
-    }
 }

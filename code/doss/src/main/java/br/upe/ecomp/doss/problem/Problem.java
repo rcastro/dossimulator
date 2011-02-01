@@ -86,4 +86,11 @@ public abstract class Problem extends Entity {
      * @param algorithm The algorithm for which this problem is applied.
      */
     public abstract void update(Algorithm algorithm);
+
+    /**
+     * Returns the change step of this problem.
+     * 
+     * @return The change step.
+     */
+    public abstract int getChangeStep();
 }

@@ -19,56 +19,30 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
-package br.upe.ecomp.doss.measurement;
+package br.upe.ecomp.doss.algorithm.volitivepso;
 
-import br.upe.ecomp.doss.algorithm.Algorithm;
+import br.upe.ecomp.doss.algorithm.pso.topology.ClanTopology;
 
-/**
- * 
- * @author George Moraes
- */
-public class MeanFitness extends Measurement {
-
-    private double sumBestFitness;
-    private double mean;
-
+public class ClanVolitivePSO extends VolitivePSO {
     /**
-     * Default constructor.
+     * Creates a new instance of this class.
      */
-    public MeanFitness() {
-        sumBestFitness = 0;
-        mean = 0;
+    public ClanVolitivePSO() {
+        super();
+        setTopology(new ClanTopology());
     }
 
     /**
      * {@inheritDoc}
      */
     public String getName() {
-        return "Mean Fitness";
+        return "Clan Volitive PSO";
     }
 
     /**
      * {@inheritDoc}
      */
     public String getDescription() {
-        return "Mean Fitness is the average over all previous fitness values. \n"
-                + "This measurement is a representative performance measurement in \n"
-                + "a dynamic environment, becouse it reflects algorithm performance \n"
-                + "across the entire range of landscape dynamics.";
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void update(Algorithm algorithm) {
-        sumBestFitness += algorithm.getBestSolutionValue();
-        mean = sumBestFitness / algorithm.getIterations();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public double getValue() {
-        return mean;
+        return "An implementation of the clan Volitive PSO algorithm.";
     }
 }

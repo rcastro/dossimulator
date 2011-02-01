@@ -37,10 +37,6 @@ import br.upe.ecomp.doss.core.annotation.Parameter;
  */
 public abstract class PSO extends Algorithm {
 
-    public static final String C2 = "C2";
-    public static final String C1 = "C1";
-    public static final String SWARM_SIZE = "Swarm size";
-
     @Parameter(name = "C1")
     private double c1;
 
@@ -50,9 +46,16 @@ public abstract class PSO extends Algorithm {
     @Parameter(name = "Swarm size")
     private int swarmSize;
 
-    @Parameter(name = "Inertial weight")
-    private double inertialWeight;
+    @Parameter(name = "Initial inertia weight")
+    private double initialInertiaWeight;
 
+    @Parameter(name = "Final inertia weight")
+    private double finalInertiaWeight;
+
+    @Parameter(name = "Linear decay according environment changes")
+    private boolean linearDecay;
+
+    private double inertiaWeight;
     private int dimensions;
     private double[] gBest;
 
@@ -70,6 +73,9 @@ public abstract class PSO extends Algorithm {
      * {@inheritDoc}
      */
     public void init() {
+
+        this.inertiaWeight = this.initialInertiaWeight;
+
         this.particles = new PSOParticle[swarmSize];
         this.dimensions = getProblem().getDimensionsNumber();
 
@@ -117,6 +123,15 @@ public abstract class PSO extends Algorithm {
             updateParticleVelocity(particle, i);
             particle.updateCurrentPosition(getProblem());
         }
+
+        if (linearDecay) {
+            if (getIterations() % getProblem().getChangeStep() != 0) {
+                inertiaWeight = inertiaWeight
+                        - ((initialInertiaWeight - finalInertiaWeight) / getProblem().getChangeStep());
+            } else {
+                inertiaWeight = initialInertiaWeight;
+            }
+        }
     }
 
     /**
@@ -129,7 +144,8 @@ public abstract class PSO extends Algorithm {
         PSOParticle bestParticleNeighborhood;
 
         bestParticleNeighborhood = topology.getBestParticleNeighborhood(this, index);
-        currentParticle.updateVelocity(inertialWeight, bestParticleNeighborhood.getBestPosition(), c1, c2);
+        currentParticle.updateVelocity(inertiaWeight, bestParticleNeighborhood.getBestPosition(), c1, c2, getProblem());
+
     }
 
     /**
@@ -149,26 +165,6 @@ public abstract class PSO extends Algorithm {
             this.gBest = pBest.clone();
         }
     }
-
-    // protected double[] getInitialPosition() {
-    // double[] position = new double[this.dimensions];
-    // Random random = new Random(System.nanoTime());
-    //
-    // for (int i = 0; i < this.dimensions; i++) {
-    // double value = random.nextDouble();
-    //
-    // position[i] = (getProblem().getUpperBound(i) - getProblem().getLowerBound(i)) * value
-    // + getProblem().getLowerBound(i);
-    //
-    // if (position[i] > getProblem().getUpperBound(i)) {
-    // position[i] = getProblem().getUpperBound(i);
-    // } else if (position[i] < getProblem().getLowerBound(i)) {
-    // position[i] = getProblem().getLowerBound(i);
-    // }
-    // }
-    //
-    // return position;
-    // }
 
     protected double[] getInitialPosition() {
         double[] position = new double[this.dimensions];
@@ -280,12 +276,32 @@ public abstract class PSO extends Algorithm {
         return gBest;
     }
 
+    public PSOParticle[] getParticles() {
+        return particles;
+    }
+
+    public void setParticles(PSOParticle[] particles) {
+        this.particles = particles;
+    }
+
+    protected void setgBest(double[] gBest) {
+        this.gBest = gBest;
+    }
+
     public int getDimensions() {
         return dimensions;
     }
 
-    public double getInertialWeight() {
-        return inertialWeight;
+    protected void setDimensions(int dimensions) {
+        this.dimensions = dimensions;
+    }
+
+    public double getInertiaWeight() {
+        return inertiaWeight;
+    }
+
+    public void setInertiaWeight(double inertiaWeight) {
+        this.inertiaWeight = inertiaWeight;
     }
 
     public void setTopology(ITopology topology) {
@@ -294,6 +310,30 @@ public abstract class PSO extends Algorithm {
 
     public ITopology getTopology() {
         return topology;
+    }
+
+    public double getInitialInertiaWeight() {
+        return initialInertiaWeight;
+    }
+
+    public double getFinalInertiaWeight() {
+        return finalInertiaWeight;
+    }
+
+    public boolean isLinearDecay() {
+        return linearDecay;
+    }
+
+    public void setInitialInertiaWeight(double initialInertiaWeight) {
+        this.initialInertiaWeight = initialInertiaWeight;
+    }
+
+    public void setFinalInertiaWeight(double finalInertiaWeight) {
+        this.finalInertiaWeight = finalInertiaWeight;
+    }
+
+    public void setLinearDecay(boolean linearDecay) {
+        this.linearDecay = linearDecay;
     }
 
     @Override

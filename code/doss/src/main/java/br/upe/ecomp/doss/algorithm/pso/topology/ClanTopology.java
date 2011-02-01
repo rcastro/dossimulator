@@ -29,9 +29,9 @@ public class ClanTopology implements ITopology {
         double bestParticleFitness = clanPSO.getParticles()[index].getBestFitness();
         double currentParticleFitness;
 
-        int begginIndex = (index / clanPSO.getClansNumber()) * clanPSO.getClansNumber();
-        int lastIndex = begginIndex + clanPSO.getClansNumber();
-        for (int i = begginIndex; i < lastIndex; i++) {
+        int beginIndex = (index / clanPSO.getParticlesPerClan()) * clanPSO.getParticlesPerClan();
+        int lastIndex = beginIndex + clanPSO.getParticlesPerClan();
+        for (int i = beginIndex; i < lastIndex; i++) {
             currentParticleFitness = clanPSO.getParticles()[i].getBestFitness();
 
             if (clanPSO.getProblem().isFitnessBetterThan(bestParticleFitness, currentParticleFitness)) {

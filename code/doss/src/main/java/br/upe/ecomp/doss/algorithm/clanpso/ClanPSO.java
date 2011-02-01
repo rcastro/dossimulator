@@ -36,8 +36,10 @@ public class ClanPSO extends PSO {
     private boolean leadersConference;
     private PSOParticle[] leaders;
 
-    @Parameter(name = "Number of clans")
     private int clansNumber;
+
+    @Parameter(name = "Particles per clan")
+    private int particlesPerClan;
 
     /**
      * Creates a new instance of this class.
@@ -59,6 +61,7 @@ public class ClanPSO extends PSO {
 
     @Override
     public void iterate() {
+        clansNumber = getSwarmSize() / particlesPerClan;
         super.iterate();
         delegateLeaders();
         performLeadersConference();
@@ -69,7 +72,7 @@ public class ClanPSO extends PSO {
         int currentParticle = 0;
         for (int i = 0; i < clansNumber; i += 1) {
             leaders[i] = getTopology().getBestParticleNeighborhood(this, currentParticle);
-            currentParticle += clansNumber;
+            currentParticle += particlesPerClan;
         }
     }
 
@@ -101,6 +104,10 @@ public class ClanPSO extends PSO {
 
     public void setClansNumber(int clansNumber) {
         this.clansNumber = clansNumber;
+    }
+
+    public int getParticlesPerClan() {
+        return particlesPerClan;
     }
 
     public boolean isLeadersConference() {

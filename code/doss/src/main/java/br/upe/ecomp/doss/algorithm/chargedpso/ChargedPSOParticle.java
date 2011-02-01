@@ -47,6 +47,7 @@ public class ChargedPSOParticle extends PSOParticle {
         super(dimensions);
     }
 
+    // TODO corrigir a limitacaoo de velocidade, fazer como PSOParticle
     /**
      * Updates the current velocity of the particle.
      * 
@@ -71,6 +72,7 @@ public class ChargedPSOParticle extends PSOParticle {
         setVelocity(velocity);
     }
 
+    // TODO corrigir a limitacao de posicao, fazer como PSOParticle
     /**
      * Updates the current position of the particle.
      * 
