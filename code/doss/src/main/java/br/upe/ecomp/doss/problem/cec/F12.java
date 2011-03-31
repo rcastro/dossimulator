@@ -33,79 +33,58 @@ import br.upe.ecomp.doss.problem.basiccec.Defaults;
  */
 public class F12 extends Problem{
 
-    
     @Parameter (name = "Dimensions")
     private int dimensions;
     
     private br.upe.ecomp.doss.problem.basiccec.F12 function;
-    /**
-     * {@inheritDoc}
-     */   
     @Override
     public void init() {
         Defaults.setDefault_dim(dimensions);
         function = new br.upe.ecomp.doss.problem.basiccec.F12();
     }
-    /**
-     * {@inheritDoc}
-     */
+
     @Override
     public int getDimensionsNumber() {
         return function.getDimension();
     }
-    /**
-     * {@inheritDoc}
-     */
+
     @Override
     public double getLowerBound(int dimension) {
         return function.getMin();
     }
-    /**
-     * {@inheritDoc}
-     */
+
     @Override
     public double getUpperBound(int dimension) {
         return function.getMax();
     }
-    /**
-     * {@inheritDoc}
-     */
+
     @Override
     public boolean isFitnessBetterThan(double bestSolutionFitness, double currentSolutionFitness) {
         return currentSolutionFitness < bestSolutionFitness;
     }
-    /**
-     * {@inheritDoc}
-     */
+
     @Override
     public double getFitness(double... solution) {
         return function.compute(solution);
     }
-    /**
-     * {@inheritDoc}
-     */
+
     @Override
     public void update(Algorithm algorithm) {
         // Do nothing
+        
     }
-    /**
-     * {@inheritDoc}
-     */
+
     @Override
     public int getChangeStep() {
-     // Do nothing
+        // Do nothing
         return 0;
     }
-    /**
-     * {@inheritDoc}
-     */
+
     @Override
     public String getName() {
         return "F12";
     }
-    /**
-     * {@inheritDoc}
-     */
+
     @Override
     public String getDescription() {
         return "D/2m-group Shifted and m-dimensional Schwefel's Problem 1.2";
