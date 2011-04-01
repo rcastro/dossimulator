@@ -36,6 +36,7 @@ public class F4 extends Problem {
     @Parameter (name = "Dimensions")
     private int dimensions;
     
+    
     private br.upe.ecomp.doss.problem.basiccec.F4 function;
     
     /**
