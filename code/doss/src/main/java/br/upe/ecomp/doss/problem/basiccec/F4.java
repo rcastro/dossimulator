@@ -57,7 +57,7 @@ public final class F4 extends ShiftedPermutatedRotatedFunction {
 
     this.m_lookup = Kernel.createPowLookup(this.m_matDim);
 
-    rest = this.m_dimension - this.m_matDim;
+    rest = (this.m_dimension - this.m_matDim);
     if (rest != this.m_matDim) {
       this.m_lookup2 = Kernel.createPowLookup(rest);
     } else {
@@ -98,7 +98,7 @@ public final class F4 extends ShiftedPermutatedRotatedFunction {
     return (Kernel.shiftedPermRotElliptic(x, this.m_o, this.m_p, this.m_m,//
         0, this.m_matDim, this.m_tmp, this.m_lookup) * 1e6) + //
         Kernel.shiftedPermElliptic(x, this.m_o, this.m_p, this.m_matDim,//
-            this.m_dimension - this.m_matDim, this.m_lookup2);
+            this.m_dimension - (this.m_matDim), this.m_lookup2);
   }
 
   /**
