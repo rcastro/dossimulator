@@ -101,7 +101,6 @@ public class ABC extends Algorithm {
         evaluateEmployedBees();
         sendOnlookerBees();
         sendScoutBees();
-        evaluateBestSolution();
     }
 
     private void sendEmployedBees() {
@@ -141,6 +140,11 @@ public class ABC extends Algorithm {
                 foodSources[i].updateCurrentPosition(tempFood, tempFitness);
                 foodSources[i].updateBestPosition(tempFood, tempFitness);
                 foodSources[i].setCountStagnation(0);
+                
+                double bestSolutionFitness = getProblem().getFitness(solution);
+                if (getProblem().isFitnessBetterThan(bestSolutionFitness, tempFitness)) {
+                    solution = tempFood;
+                }
             }
             else
             {
@@ -172,6 +176,7 @@ public class ABC extends Algorithm {
         while(count < foodCount) {
     
             double rand = random.nextDouble() * 32767 / ((double)(32767) + (double)(1));
+            
             if (rand < foodSources[i].getProbabilitySelection()) {
                 count++;
                 
@@ -209,6 +214,11 @@ public class ABC extends Algorithm {
                     foodSources[i].updateCurrentPosition(tempFood, tempFitness);
                     foodSources[i].updateBestPosition(tempFood, tempFitness);
                     foodSources[i].setCountStagnation(0);
+                    
+                    double bestSolutionFitness = getProblem().getFitness(solution);
+                    if (getProblem().isFitnessBetterThan(bestSolutionFitness, tempFitness)) {
+                        solution = tempFood;
+                    }
                 }
                 else
                 {
@@ -238,26 +248,6 @@ public class ABC extends Algorithm {
     
     public FoodSource[] getParticles() {
         return foodSources;
-    }
-    
-    private void evaluateBestSolution() {
-        
-        double[] bestSolution = new double[dimensions];
-        double bestFitness;
-        
-        bestFitness = foodSources[0].getBestFitness();
-        bestSolution = foodSources[0].getBestPosition();
-        
-        for (int i = 1; i < foodCount; i++) {
-            
-            if (getProblem().isFitnessBetterThan(bestFitness, foodSources[i].getBestFitness())) {
-                bestFitness = foodSources[i].getBestFitness();
-                bestSolution = foodSources[i].getBestPosition();
-            }
-        }
-        
-        if (getProblem().isFitnessBetterThan(getProblem().getFitness(solution), bestFitness))
-            solution = bestSolution;
     }
     
     /**
