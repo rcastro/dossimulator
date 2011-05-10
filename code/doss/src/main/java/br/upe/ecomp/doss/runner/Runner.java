@@ -27,6 +27,7 @@ import java.util.List;
 import br.upe.ecomp.doss.algorithm.Algorithm;
 import br.upe.ecomp.doss.core.exception.InfraException;
 import br.upe.ecomp.doss.core.parser.AlgorithmXMLParser;
+import br.upe.ecomp.doss.measurement.Measurement;
 import br.upe.ecomp.doss.recorder.FileChartRecorder;
 import br.upe.ecomp.doss.recorder.FileRecorder;
 
@@ -37,7 +38,7 @@ import br.upe.ecomp.doss.recorder.FileRecorder;
  */
 public class Runner implements Runnable {
 
-    private static final int SLEEP_TIME = 200;
+    private static final int SLEEP_TIME = 0;
 
     private String filePath;
     private String fileName;
@@ -106,6 +107,9 @@ public class Runner implements Runnable {
             // Initializes the problem here because other entities may rely on him to be initialized
             // correctly.
             algorithm.getProblem().init();
+            for (Measurement measurement : algorithm.getMeasurements()) {
+                measurement.init();
+            }
 
             if (!showSimulation) {
                 algorithm.setRecorder(new FileRecorder());
