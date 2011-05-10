@@ -93,4 +93,18 @@ public abstract class Problem extends Entity {
      * @return The change step.
      */
     public abstract int getChangeStep();
+
+    /**
+     * Returns the value of the optimum.
+     * 
+     * @return The value of the optimum.
+     */
+    public abstract double getOptimumValue();
+
+    /**
+     * Returns the position of the optimum.
+     * 
+     * @return The position of the optimum.
+     */
+    public abstract double[] getOptimumPosition();
 }
