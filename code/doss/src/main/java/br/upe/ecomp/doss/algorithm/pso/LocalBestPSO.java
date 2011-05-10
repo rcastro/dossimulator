@@ -42,7 +42,7 @@ public class LocalBestPSO extends PSO {
      * {@inheritDoc}
      */
     public String getName() {
-        return "Local Best PSO";
+        return "Local PSO";
     }
 
     /**

@@ -21,7 +21,7 @@
  */
 package br.upe.ecomp.doss.algorithm.apso;
 
-import br.upe.ecomp.doss.algorithm.pso.topology.LocalBestTopology;
+import br.upe.ecomp.doss.algorithm.pso.topology.GlobalBestTopology;
 
 public class GlobalBestAPSO extends APSO {
     /**
@@ -29,14 +29,14 @@ public class GlobalBestAPSO extends APSO {
      */
     public GlobalBestAPSO() {
         super();
-        setTopology(new LocalBestTopology());
+        setTopology(new GlobalBestTopology());
     }
 
     /**
      * {@inheritDoc}
      */
     public String getName() {
-        return "Local Best APSO";
+        return "Local APSO";
     }
 
     /**

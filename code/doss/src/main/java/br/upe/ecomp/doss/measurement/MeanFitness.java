@@ -36,6 +36,11 @@ public class MeanFitness extends Measurement {
      * Default constructor.
      */
     public MeanFitness() {
+        init();
+    }
+
+    @Override
+    public void init() {
         sumBestFitness = 0;
         mean = 0;
     }

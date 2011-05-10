@@ -96,21 +96,21 @@ public class PSOParticle extends Particle {
      */
     public void updateCurrentPosition(Problem problem) {
         MersenneTwister random = new MersenneTwister(System.nanoTime());
-        double[] position = getCurrentPosition();
-        double newPosition;
+        double[] position = getCurrentPosition().clone();
+        double nextPosition;
+        double positionLimiter = 0.5;
         for (int i = 0; i < getDimensions(); i++) {
-            newPosition = position[i] + velocity[i];
+            nextPosition = position[i] + velocity[i];
 
             // if a particle exceeds the search space limit, so inverts the particle velocity on
             // that dimension which the search space limit was exceeded
-            if (newPosition >= problem.getUpperBound(i)) {
-                position[i] = problem.getUpperBound(i) - velocity[i] * random.nextDouble();
-            } else if (newPosition <= problem.getLowerBound(i)) {
-                position[i] = problem.getLowerBound(i) - velocity[i] * random.nextDouble();
+            if (nextPosition >= problem.getUpperBound(i)) {
+                position[i] = problem.getUpperBound(i) - velocity[i] * random.nextDouble() * positionLimiter;
+            } else if (nextPosition <= problem.getLowerBound(i)) {
+                position[i] = problem.getLowerBound(i) - velocity[i] * random.nextDouble() * positionLimiter;
             } else {
-                position[i] = newPosition;
+                position[i] = nextPosition;
             }
-
         }
         updateCurrentPosition(position, problem.getFitness(position));
     }
@@ -132,4 +132,5 @@ public class PSOParticle extends Particle {
     public void setVelocity(double[] velocity) {
         this.velocity = velocity;
     }
+
 }

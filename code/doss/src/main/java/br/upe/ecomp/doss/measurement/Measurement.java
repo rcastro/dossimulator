@@ -33,6 +33,12 @@ import br.upe.ecomp.doss.core.entity.Entity;
 public abstract class Measurement extends Entity {
 
     /**
+     * Makes the initial setup required calculate the measurement value.
+     * 
+     */
+    public abstract void init();
+
+    /**
      * Updates this measure based on the current state of the algorithm.
      * 
      * @param algorithm The algorithm for which this measure is applied.

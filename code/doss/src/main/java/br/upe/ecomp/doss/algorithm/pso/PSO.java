@@ -34,14 +34,24 @@ import br.upe.ecomp.doss.core.annotation.Parameter;
  * An implementation of the PSO algorithm.
  * 
  * @author Rodrigo Castro
+ * @author George Moraes
  */
 public abstract class PSO extends Algorithm {
 
-    @Parameter(name = "C1")
-    private double c1;
+    @Parameter(name = "Initial C1")
+    private double initialC1;
 
-    @Parameter(name = "C2")
-    private double c2;
+    @Parameter(name = "Final C1")
+    private double finalC1;
+
+    @Parameter(name = "Initial C2")
+    private double initialC2;
+
+    @Parameter(name = "Final C2")
+    private double finalC2;
+
+    @Parameter(name = "Decrease C1 and Increase C2")
+    private boolean decreaseC1increaseC2;
 
     @Parameter(name = "Swarm size")
     private int swarmSize;
@@ -52,12 +62,18 @@ public abstract class PSO extends Algorithm {
     @Parameter(name = "Final inertia weight")
     private double finalInertiaWeight;
 
-    @Parameter(name = "Linear decay according environment changes")
+    @Parameter(name = "Inertia linear decay according environment changes")
     private boolean linearDecay;
 
+    @Parameter(name = "Reinitializate particle percent")
+    private double percentRestartParticles;
+
     private double inertiaWeight;
+    private double c1;
+    private double c2;
     private int dimensions;
     private double[] gBest;
+    private PSOParticle bestParticle;
 
     private PSOParticle[] particles;
 
@@ -73,8 +89,9 @@ public abstract class PSO extends Algorithm {
      * {@inheritDoc}
      */
     public void init() {
-
         this.inertiaWeight = this.initialInertiaWeight;
+        this.c1 = this.initialC1;
+        this.c2 = this.initialC2;
 
         this.particles = new PSOParticle[swarmSize];
         this.dimensions = getProblem().getDimensionsNumber();
@@ -83,53 +100,90 @@ public abstract class PSO extends Algorithm {
 
         // Define the gBest particle of the first iteration
         this.gBest = particles[0].getCurrentPosition().clone();
-        for (PSOParticle particle : particles) {
-            calculateGBest(particle);
-        }
+        this.bestParticle = particles[0];
+        calculatePbestAndGbest();
     }
 
+    /**
+     * Create all particles of the swarm.
+     */
     protected void createParticles() {
-        double[] position;
         for (int i = 0; i < swarmSize; i++) {
-            position = getInitialPosition();
-
-            PSOParticle particle = new PSOParticle(dimensions);
-            particle.updateCurrentPosition(position, getProblem().getFitness(position));
-            particle.updateBestPosition(position.clone(), particle.getCurrentFitness());
-            particle.setVelocity(getInitialVelocity());
-
-            particles[i] = particle;
+            particles[i] = newParticle();
         }
         setParticles(particles);
+    }
+
+    public PSOParticle newParticle() {
+        double[] position = getInitialPosition();
+        PSOParticle particle = new PSOParticle(dimensions);
+        particle.updateCurrentPosition(position, getProblem().getFitness(position));
+        particle.updateBestPosition(position.clone(), particle.getCurrentFitness());
+        particle.setVelocity(getInitialVelocity());
+        return particle;
+    }
+
+    public void reInitParticles(double percent, PSOParticle[] particles) {
+        if (getIterations() > 0 && getIterations() % getProblem().getChangeStep() == 0) {
+            int newPerticlesNum = (int) Math.floor(getSwarmSize() * (percent / 100));
+            for (int i = 0; i < newPerticlesNum; i++) {
+                particles[i] = newParticle();
+            }
+        }
     }
 
     /**
      * {@inheritDoc}
      */
     public void iterate() {
+        // Updating the velocity and position of all particles
+        updateVelocityAndPosition();
 
         // Calculating the pbest and gbest positions
-        for (PSOParticle particle : particles) {
-            particle.updatePBest(getProblem());
+        calculatePbestAndGbest();
 
-            // Stores the best particle's position.
-            calculateGBest(particle);
-        }
+        // Updating parameters
+        updateParameters();
 
-        // Updating the velocity and position of all particles
+        // Reinitializing particles after environment change
+        reInitParticles(percentRestartParticles, particles);
+    }
+
+    protected void updateVelocityAndPosition() {
         for (int i = 0; i < swarmSize; i++) {
             PSOParticle particle = particles[i];
-
             updateParticleVelocity(particle, i);
             particle.updateCurrentPosition(getProblem());
         }
+    }
 
+    protected void calculatePbestAndGbest() {
+        for (PSOParticle particle : particles) {
+            particle.updatePBest(getProblem());
+            // Stores the best particle's position.
+            calculateGBest(particle);
+        }
+    }
+
+    protected void updateParameters() {
         if (linearDecay) {
             if (getIterations() % getProblem().getChangeStep() != 0) {
                 inertiaWeight = inertiaWeight
                         - ((initialInertiaWeight - finalInertiaWeight) / getProblem().getChangeStep());
             } else {
                 inertiaWeight = initialInertiaWeight;
+            }
+        }
+
+        if (decreaseC1increaseC2) {
+            if (getIterations() % getProblem().getChangeStep() != 0) {
+                // decrease linearly
+                c1 = c1 - ((initialC1 - finalC1) / getProblem().getChangeStep());
+                // increase linearly
+                c2 = c2 - ((initialC2 - finalC2) / getProblem().getChangeStep());
+            } else {
+                c1 = initialC1;
+                c2 = initialC2;
             }
         }
     }
@@ -142,10 +196,8 @@ public abstract class PSO extends Algorithm {
      */
     protected void updateParticleVelocity(PSOParticle currentParticle, int index) {
         PSOParticle bestParticleNeighborhood;
-
         bestParticleNeighborhood = topology.getBestParticleNeighborhood(this, index);
         currentParticle.updateVelocity(inertiaWeight, bestParticleNeighborhood.getBestPosition(), c1, c2, getProblem());
-
     }
 
     /**
@@ -157,19 +209,17 @@ public abstract class PSO extends Algorithm {
      */
     protected void calculateGBest(PSOParticle particle) {
         double[] pBest = particle.getBestPosition();
-
         double pBestFitness = getProblem().getFitness(pBest);
         double gBestFitness = getProblem().getFitness(this.gBest);
-
         if (getProblem().isFitnessBetterThan(gBestFitness, pBestFitness)) {
             this.gBest = pBest.clone();
+            bestParticle = particle;
         }
     }
 
     protected double[] getInitialPosition() {
-        double[] position = new double[this.dimensions];
-        // Random random = new Random(System.nanoTime());
         MersenneTwister random = new MersenneTwister(System.nanoTime());
+        double[] position = new double[this.dimensions];
 
         for (int i = 0; i < this.dimensions; i++) {
             double value = random.nextDouble();
@@ -187,15 +237,12 @@ public abstract class PSO extends Algorithm {
     }
 
     protected double[] getInitialVelocity() {
-        double[] velocity = new double[this.dimensions];
         Random random = new Random(System.nanoTime());
-
+        double[] velocity = new double[this.dimensions];
         for (int i = 0; i < this.dimensions; i++) {
-
             // The initial velocity ought be a value between zero and one
             velocity[i] = random.nextDouble();
         }
-
         return velocity;
     }
 
@@ -280,10 +327,6 @@ public abstract class PSO extends Algorithm {
         return particles;
     }
 
-    public void setParticles(PSOParticle[] particles) {
-        this.particles = particles;
-    }
-
     protected void setgBest(double[] gBest) {
         this.gBest = gBest;
     }
@@ -334,6 +377,50 @@ public abstract class PSO extends Algorithm {
 
     public void setLinearDecay(boolean linearDecay) {
         this.linearDecay = linearDecay;
+    }
+
+    public PSOParticle getBestParticle() {
+        return bestParticle;
+    }
+
+    public void setBestParticle(PSOParticle bestParticle) {
+        this.bestParticle = bestParticle;
+    }
+
+    public double getPercentRestartParticles() {
+        return percentRestartParticles;
+    }
+
+    public void setPercentRestartParticles(double percentRestartParticles) {
+        this.percentRestartParticles = percentRestartParticles;
+    }
+
+    public double getInitialC1() {
+        return initialC1;
+    }
+
+    public double getInitialC2() {
+        return initialC2;
+    }
+
+    public void setInitialC1(double initialC1) {
+        this.initialC1 = initialC1;
+    }
+
+    public void setFinalC1(double finalC1) {
+        this.finalC1 = finalC1;
+    }
+
+    public void setInitialC2(double initialC2) {
+        this.initialC2 = initialC2;
+    }
+
+    public void setFinalC2(double finalC2) {
+        this.finalC2 = finalC2;
+    }
+
+    public void setDecreaseC1increaseC2(boolean decreaseC1increaseC2) {
+        this.decreaseC1increaseC2 = decreaseC1increaseC2;
     }
 
     @Override
