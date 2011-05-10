@@ -257,4 +257,5 @@ public abstract class Algorithm extends Entity implements Runnable {
     public void setShowSimulation(boolean showSimulation) {
         this.showSimulation = showSimulation;
     }
+
 }

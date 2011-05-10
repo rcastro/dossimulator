@@ -32,6 +32,10 @@ public class BestFitness extends Measurement {
 
     private double fitness;
 
+    @Override
+    public void init() {
+    }
+
     /**
      * Default constructor.
      */

@@ -31,6 +31,7 @@ package br.upe.ecomp.doss.algorithm;
  * </p>
  * 
  * @author Rodrigo Castro
+ * @author George Moraes
  */
 public class Particle {
 
@@ -95,6 +96,24 @@ public class Particle {
      */
     public double[] getCurrentPosition() {
         return currentPosition;
+    }
+
+    /**
+     * Sets the current fitness of the particle.
+     * 
+     * @param currentFitness The current fitness of the particle.
+     */
+    public void setCurrentFitness(double currentFitness) {
+        this.currentFitness = currentFitness;
+    }
+
+    /**
+     * Sets the current position of the particle.
+     * 
+     * @param currentPosition The current position of the particle.
+     */
+    public void setCurrentPosition(double[] currentPosition) {
+        this.currentPosition = currentPosition;
     }
 
     /**

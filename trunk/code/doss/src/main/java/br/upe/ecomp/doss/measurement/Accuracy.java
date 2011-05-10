@@ -33,6 +33,10 @@ public class Accuracy extends Measurement {
     private double meanAccuracy;
 
     @Override
+    public void init() {
+    }
+
+    @Override
     public String getName() {
         return "Accuracy";
     }
@@ -52,4 +56,5 @@ public class Accuracy extends Measurement {
         // TODO Auto-generated method stub
         return 0;
     }
+
 }

@@ -29,7 +29,7 @@ import org.apache.commons.math.random.RandomData;
 import org.apache.commons.math.random.RandomDataImpl;
 import org.apache.commons.math.util.MathUtils;
 
-import br.upe.ecomp.doss.algorithm.pso.PSO;
+import br.upe.ecomp.doss.algorithm.pso.AbstractPSO;
 import br.upe.ecomp.doss.algorithm.pso.PSOParticle;
 import br.upe.ecomp.doss.stopCondition.MaximumIterationsStopCondition;
 import br.upe.ecomp.doss.stopCondition.StopCondition;
@@ -39,7 +39,7 @@ import br.upe.ecomp.doss.stopCondition.StopCondition;
  * 
  * @author George Moraes
  */
-public abstract class APSO extends PSO {
+public abstract class APSO extends AbstractPSO {
 
     // APSO necessary parameters
     private double inertiaWeightMin;
@@ -65,6 +65,7 @@ public abstract class APSO extends PSO {
         this.sigmaMin = 0.1;
         this.sigmaMax = 1;
         this.evolutionaryFactor = 0;
+        setDecreaseC1increaseC2(false); // Because C1 and C2 and auto adaptive in APSO algorithm
     }
 
     /**
@@ -78,9 +79,8 @@ public abstract class APSO extends PSO {
         // Define the gBest particle of the first iteration
         setgBest(getParticles()[0].getCurrentPosition().clone());
         APSOParticle[] particles = (APSOParticle[]) getParticles();
-        for (APSOParticle particle : particles) {
-            calculateGBest(particle);
-        }
+        setBestParticle(getParticles()[0]);
+        calculatePbestAndGbest();
 
         // Updating each mean distance to others particles
         updateMeanDistanceToOtherPaticles(particles);
@@ -95,42 +95,32 @@ public abstract class APSO extends PSO {
      */
     protected void createParticles() {
         APSOParticle[] particles = new APSOParticle[getSwarmSize()];
-
-        double[] position;
         for (int i = 0; i < getSwarmSize(); i++) {
-            position = getInitialPosition();
-
-            APSOParticle particle = new APSOParticle(getDimensions());
-            particle.updateCurrentPosition(position, getProblem().getFitness(position));
-            particle.updateBestPosition(position.clone(), particle.getCurrentFitness());
-            particle.setVelocity(getInitialVelocity());
-
-            particles[i] = particle;
+            particles[i] = newParticle();
         }
         setParticles(particles);
+    }
+
+    public APSOParticle newParticle() {
+        double[] position = getInitialPosition();
+        APSOParticle particle = new APSOParticle(getDimensions());
+        particle.updateCurrentPosition(position, getProblem().getFitness(position));
+        particle.updateBestPosition(position.clone(), particle.getCurrentFitness());
+        particle.setVelocity(getInitialVelocity());
+        return particle;
     }
 
     /**
      * {@inheritDoc}
      */
     public void iterate() {
+        APSOParticle[] particles = (APSOParticle[]) getParticles();
 
         // Updating the velocity and position of all particles
-        for (int i = 0; i < getSwarmSize(); i++) {
-            APSOParticle particle = (APSOParticle) getParticles()[i];
-
-            updateParticleVelocity(particle, i);
-            particle.updateCurrentPosition(getProblem());
-        }
-
+        updateVelocityAndPosition();
         // Calculating the pbest and gbest positions
-        APSOParticle[] particles = (APSOParticle[]) getParticles();
-        for (APSOParticle particle : particles) {
-            particle.updatePBest(getProblem());
+        calculatePbestAndGbest();
 
-            // Stores the best particle's position.
-            calculateGBest(particle);
-        }
         // Updating each mean distance to others particles
         updateMeanDistanceToOtherPaticles(particles);
         // Defines the evolutionary state of the swarm and adapts parameters
@@ -138,6 +128,11 @@ public abstract class APSO extends PSO {
         // Executes the Elitist Learning Strategy
         doElitistLearningStrategy();
 
+        // Updating parameters
+        updateParameters();
+
+        // Reinitializing particles after environment change
+        reInitParticles(getPercentRestartParticles(), particles);
     }
 
     private double calculateMeanDistanceToOtherPaticles(int index) {
@@ -273,14 +268,14 @@ public abstract class APSO extends PSO {
         // If the change improves the fitness then update the best particle with the new position,
         // else update the worst particle with the new position.
         if (getProblem().isFitnessBetterThan(currentBestFitness, newFitness)) {
-            bestParticle.updateBestPosition(newPosition, newFitness);
-            bestParticle.updateCurrentPosition(getProblem());
+            bestParticle.updateBestPosition(newPosition.clone(), newFitness);
+            bestParticle.updateCurrentPosition(newPosition.clone(), newFitness);
         } else {
             PSOParticle worstParticle = Collections.min(apsoParticles, new ComparatorMaximumFitness());
-            worstParticle.updateCurrentPosition(getProblem());
-            worstParticle.updateBestPosition(newPosition, newFitness);
+            worstParticle.updateCurrentPosition(newPosition.clone(), newFitness);
+            worstParticle.updatePBest(getProblem());
         }
-
+        calculateGBest(bestParticle);
     }
 
     // TODO retirar esse metodo,
